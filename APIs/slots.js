@@ -84,4 +84,26 @@ router.delete("/:id", (req, res) => {
   });
 });
 
+router.post("/isAvailable", (req, res) => {
+  try{
+    const { slot_day, slot_type, slot_number } = req.body;
+    if (!slot_day || !slot_type || slot_number === undefined) {
+      return res.status(400).json({ error: "Slot day, type, and number are required." });
+    }
+
+    db.get("SELECT * FROM bookings WHERE slot_day = ? AND slot_type = ? AND slot_number = ?", [slot_day, slot_type, slot_number], (err, row) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+      } else if (row) {
+        res.json({ isAvailable: false });
+      } else {
+        res.json({ isAvailable: true });
+      }n
+    }
+    );
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

@@ -33,22 +33,39 @@ router.get("/:id", (req, res) => {
 
 // Create a new booking
 router.post("/", (req, res) => {
-  const { event_id, hall_id, slot_id, booking_date, menu_id, menu_item_ids, no_of_persons, 
-          final_menu_price, final_base_menu_price, total_additional_service_price, 
-          total_amount, discount, total_payable_amount } = req.body;
-  
-  if (!event_id || !hall_id || !slot_id || !booking_date || !menu_id || !menu_item_ids) {
-    return res.status(400).json({ error: "All required fields (event_id, hall_id, slot_id, etc.) must be provided." });
+  const {
+    booking_name,
+    booker_name,
+    description = null,
+    slot_day,
+    slot_type,
+    slot_number,
+    number_of_persons,
+    add_service_ids = null,
+    menu_id
+  } = req.body;
+
+  // Ensure required fields are provided
+  if (!booker_name || !slot_day || !slot_type || slot_number === undefined || !number_of_persons || !menu_id) {
+    return res.status(400).json({ error: "All required fields (booker_name, slot_day, slot_type, etc.) must be provided." });
   }
 
   db.run(
-    `INSERT INTO bookings (event_id, hall_id, slot_id, booking_date, menu_id, menu_item_ids, no_of_persons, 
-      final_menu_price, final_base_menu_price, total_additional_service_price, total_amount, 
-      discount, total_payable_amount) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [event_id, hall_id, slot_id, booking_date, menu_id, menu_item_ids, no_of_persons,
-     final_menu_price, final_base_menu_price, total_additional_service_price, total_amount, 
-     discount, total_payable_amount],
+    `INSERT INTO bookings 
+      (booking_name, booker_name, description, date, slot_day, slot_type, slot_number, 
+       number_of_persons, add_service_ids, menu_id) 
+     VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)`,
+    [
+      booking_name,
+      booker_name,
+      description,
+      slot_day,
+      slot_type,
+      slot_number,
+      number_of_persons,
+      add_service_ids, // Can be NULL
+      menu_id
+    ],
     function (err) {
       if (err) {
         console.error("Error creating booking:", err.message);

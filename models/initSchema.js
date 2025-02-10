@@ -81,23 +81,16 @@ const initDatabase = () => {
 
     `CREATE TABLE IF NOT EXISTS bookings (
       booking_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      event_id INTEGER NOT NULL,
-      hall_id INTEGER NOT NULL,
-      slot_id INTEGER NOT NULL,
-      booking_date TEXT NOT NULL,
-      menu_id INTEGER NOT NULL,
-      menu_item_ids TEXT NOT NULL, -- Comma-separated IDs
-      no_of_persons INTEGER NOT NULL,
-      final_menu_price REAL NOT NULL,
-      final_base_menu_price REAL NOT NULL,
-      total_additional_service_price REAL NOT NULL,
-      total_amount REAL NOT NULL,
-      discount REAL DEFAULT 0,
-      total_payable_amount REAL NOT NULL,
-      FOREIGN KEY (event_id) REFERENCES events (event_id),
-      FOREIGN KEY (hall_id) REFERENCES halls (hall_id),
-      FOREIGN KEY (slot_id) REFERENCES slots (slot_id),
-      FOREIGN KEY (menu_id) REFERENCES menus (menu_id)
+      booking_name TEXT,
+      booker_name TEXT NOT NULL,
+      description TEXT,
+      date TEXT DEFAULT CURRENT_TIMESTAMP,
+      slot_day TEXT NOT NULL,
+      slot_type TEXT NOT NULL,
+      slot_number INTEGER NOT NULL,
+      number_of_persons INTEGER NOT NULL,
+      add_service_ids TEXT,
+      menu_id INTEGER NOT NULL
     );`
   ];
 

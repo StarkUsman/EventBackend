@@ -139,19 +139,58 @@ const initializeDatabase = () => {
     );
   });
 
-  // 8. Insert data into bookings
+  // 8. Insert data into bookings (updated schema)
+const bookings = [
+  {
+    booking_name: "Wedding Reception",
+    booker_name: "Faraz Usman",
+    description: "A grand wedding reception with all the arrangements.",
+    slot_day: "2025-02-08",
+    slot_type: "Luxury",
+    slot_number: 1,
+    number_of_persons: 150,
+    add_service_ids: "1,2,3",  // Optional, can be null
+    menu_id: 1
+  },
+  {
+    booking_name: "Business Conference",
+    booker_name: "John Doe",
+    description: "A conference for business professionals.",
+    slot_day: "2025-02-09",
+    slot_type: "Standard",
+    slot_number: 2,
+    number_of_persons: 200,
+    add_service_ids: "2,3", // Optional, can be null
+    menu_id: 2
+  }
+];
+
+bookings.forEach(booking => {
   db.run(
-    `INSERT INTO bookings (hall_id, slot_id, booking_date, menu_id, menu_item_ids, no_of_persons, final_menu_price, 
-                            final_base_menu_price, total_additional_service_price, total_amount, discount, total_payable_amount) 
-     VALUES (1, 1, '2025-02-01', 1, '1,2', 100, 1000, 800, 300, 1500, 0, 1500)`,
+    `INSERT INTO bookings 
+      (booking_name, booker_name, description, date, slot_day, slot_type, slot_number, 
+       number_of_persons, add_service_ids, menu_id) 
+     VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)`,
+    [
+      booking.booking_name,
+      booking.booker_name,
+      booking.description,
+      booking.slot_day,
+      booking.slot_type,
+      booking.slot_number,
+      booking.number_of_persons,
+      booking.add_service_ids, // Can be NULL
+      booking.menu_id
+    ],
     function (err) {
       if (err) {
         console.error("Error inserting booking:", err.message);
       } else {
-        console.log("Inserted booking.");
+        console.log(`Inserted booking: ${booking.booking_name}`);
       }
     }
   );
+});
 
   // 9. Insert data into booking_additional_services
   db.run(
