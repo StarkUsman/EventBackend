@@ -3,15 +3,15 @@ const db = require("./database");
 const initializeDatabase = () => {
   // 1. Insert data into halls
   const halls = [
-    { hall_name: "Grand Hall", capacity: 500, isAvailable: 1 },
-    { hall_name: "Luxury Hall", capacity: 300, isAvailable: 1 },
-    { hall_name: "Small Hall", capacity: 100, isAvailable: 1 }
+    { hall_name: "Normal", capacity: 500, isAvailable1: 1, isAvailable2: 1 },
+    { hall_name: "Luxury", capacity: 300, isAvailable1: 1, isAvailable2: 0 },
+    { hall_name: "Premium", capacity: 100, isAvailable1: 1, isAvailable2: 1 }
   ];
 
   halls.forEach(hall => {
     db.run(
-      `INSERT INTO halls (hall_name, capacity, isAvailable) VALUES (?, ?, ?)`,
-      [hall.hall_name, hall.capacity, hall.isAvailable],
+      `INSERT INTO halls (hall_name, capacity, isAvailable1, isAvailable2) VALUES (?, ?, ?, ?)`,
+      [hall.hall_name, hall.capacity, hall.isAvailable1, hall.isAvailable2],
       function (err) {
         if (err) {
           console.error("Error inserting hall:", err.message);

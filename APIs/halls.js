@@ -29,14 +29,14 @@ router.get("/:id", (req, res) => {
 
 // Create a new hall
 router.post("/", (req, res) => {
-  const { hall_name, capacity, isAvailable } = req.body;
+  const { hall_name, capacity, isAvailable1, isAvailable2 } = req.body;
   if (!hall_name || !capacity) {
     return res.status(400).json({ error: "Hall name and capacity are required." });
   }
 
   db.run(
-    "INSERT INTO halls (hall_name, capacity, isAvailable) VALUES (?, ?, ?)",
-    [hall_name, capacity, isAvailable ?? 1],
+    "INSERT INTO halls (hall_name, capacity, isAvailable1, isAvailable2) VALUES (?, ?, ?, ?)",
+    [hall_name, capacity, isAvailable1 ?? 1, isAvailable2 ?? 1],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message });
@@ -50,10 +50,10 @@ router.post("/", (req, res) => {
 // Update a hall
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { hall_name, capacity, isAvailable } = req.body;
+  const { hall_name, capacity, isAvailable1, isAvailable2 } = req.body;
   db.run(
-    "UPDATE halls SET hall_name = ?, capacity = ?, isAvailable = ? WHERE hall_id = ?",
-    [hall_name, capacity, isAvailable, id],
+    "UPDATE halls SET hall_name = ?, capacity = ?, isAvailable1 = ?, isAvailable2 = ? WHERE hall_id = ?",
+    [hall_name, capacity, isAvailable1, isAvailable2, id],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message });

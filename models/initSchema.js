@@ -7,7 +7,8 @@ const initDatabase = () => {
       hall_id INTEGER PRIMARY KEY AUTOINCREMENT,
       hall_name TEXT NOT NULL,
       capacity INTEGER NOT NULL,
-      isAvailable BOOLEAN DEFAULT 1
+      isAvailable1 BOOLEAN DEFAULT 1,
+      isAvailable2 BOOLEAN DEFAULT 1
     );`,
 
     `CREATE TABLE IF NOT EXISTS events (
