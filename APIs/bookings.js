@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Get all bookings
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM bookings", [], (err, rows) => {
+  db.all("SELECT * FROM bookings ORDER BY booking_id DESC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching bookings:", err.message);
       res.status(500).json({ error: err.message });
@@ -35,7 +35,9 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const {
     booking_name,
-    booker_name,
+    contact_number,
+    alt_contact_number,
+    booking_type,
     description = null,
     slot_day,
     slot_type,
@@ -46,18 +48,20 @@ router.post("/", (req, res) => {
   } = req.body;
 
   // Ensure required fields are provided
-  if (!booker_name || !slot_day || !slot_type || slot_number === undefined || !number_of_persons || !menu_id) {
-    return res.status(400).json({ error: "All required fields (booker_name, slot_day, slot_type, etc.) must be provided." });
+  if (!booking_type || !slot_day || !slot_type || slot_number === undefined || !number_of_persons || !menu_id) {
+    return res.status(400).json({ error: "All required fields (booking_type, slot_day, slot_type, etc.) must be provided." });
   }
 
   db.run(
     `INSERT INTO bookings 
-      (booking_name, booker_name, description, date, slot_day, slot_type, slot_number, 
+      (booking_name, contact_number, alt_contact_number, booking_type, description, date, slot_day, slot_type, slot_number, 
        number_of_persons, add_service_ids, menu_id) 
-     VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)`,
     [
       booking_name,
-      booker_name,
+      contact_number,
+      alt_contact_number,
+      booking_type,
       description,
       slot_day,
       slot_type,
@@ -68,7 +72,7 @@ router.post("/", (req, res) => {
     ],
     function (err) {
       if (err) {
-        console.error("Error creating booking:", err.message);
+        console.error("Error creating booking:", err);
         res.status(500).json({ error: err.message });
       } else {
         console.log(`Booking created successfully with ID ${this.lastID}.`);

@@ -142,8 +142,10 @@ const initializeDatabase = () => {
   // 8. Insert data into bookings (updated schema)
 const bookings = [
   {
-    booking_name: "Wedding Reception",
-    booker_name: "Faraz Usman",
+    booking_name: "Faraz Usman",
+    contact_number: "123-456-7890",
+    alt_contact_number: "987-654-3210",
+    booking_type: "Wedding",
     description: "A grand wedding reception with all the arrangements.",
     slot_day: "2025-02-08",
     slot_type: "Luxury",
@@ -153,8 +155,10 @@ const bookings = [
     menu_id: 1
   },
   {
-    booking_name: "Business Conference",
-    booker_name: "John Doe",
+    booking_name: "Jane Doe",
+    contact_number: "123-456-7890",
+    alt_contact_number: "987-654-3210",
+    booking_type: "Conference",
     description: "A conference for business professionals.",
     slot_day: "2025-02-09",
     slot_type: "Standard",
@@ -168,12 +172,14 @@ const bookings = [
 bookings.forEach(booking => {
   db.run(
     `INSERT INTO bookings 
-      (booking_name, booker_name, description, date, slot_day, slot_type, slot_number, 
+      (booking_name, contact_number, alt_contact_number, booking_type, description, date, slot_day, slot_type, slot_number, 
        number_of_persons, add_service_ids, menu_id) 
-     VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)`,
     [
       booking.booking_name,
-      booking.booker_name,
+      booking.contact_number,
+      booking.alt_contact_number,
+      booking.booking_type,
       booking.description,
       booking.slot_day,
       booking.slot_type,

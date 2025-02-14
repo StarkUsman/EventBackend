@@ -83,7 +83,9 @@ const initDatabase = () => {
     `CREATE TABLE IF NOT EXISTS bookings (
       booking_id INTEGER PRIMARY KEY AUTOINCREMENT,
       booking_name TEXT,
-      booker_name TEXT NOT NULL,
+      contact_number TEXT,
+      alt_contact_number TEXT,
+      booking_type TEXT NOT NULL,
       description TEXT,
       date TEXT DEFAULT CURRENT_TIMESTAMP,
       slot_day TEXT NOT NULL,
