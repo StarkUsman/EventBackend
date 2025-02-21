@@ -94,7 +94,56 @@ const initDatabase = () => {
       number_of_persons INTEGER NOT NULL,
       add_service_ids TEXT,
       menu_id INTEGER NOT NULL
-    );`
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS vendors (
+        vendor_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        balance REAL DEFAULT 0
+      );`,
+
+    `CREATE TABLE IF NOT EXISTS units (
+      unit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      unit_name TEXT NOT NULL,
+      symbol TEXT NOT NULL
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS category (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category TEXT NOT NULL UNIQUE,
+      img TEXT,
+      total INTEGER NOT NULL DEFAULT 0
+    );`,
+    
+    `CREATE TABLE IF NOT EXISTS product (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      item TEXT NOT NULL,
+      code TEXT,
+      category TEXT NOT NULL,
+      unit TEXT NOT NULL,
+      quantity INTEGER NOT NULL,
+      sellingPrice REAL NOT NULL,
+      purchasePrice REAL NOT NULL,
+      img TEXT,
+      description TEXT
+    );`,
+    
+    `CREATE TABLE IF NOT EXISTS purchase (
+      purch_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      vendor_id INTEGER NOT NULL,
+      purchase_date TEXT NOT NULL,
+      due_date TEXT NOT NULL,
+      reference_no TEXT,
+      invoice_sr_no TEXT,
+      products JSON NOT NULL,
+      total_amount REAL NOT NULL,
+      signature_text TEXT,
+      signature_img TEXT
+    );`,
+
   ];
 
   queries.forEach((query) => {

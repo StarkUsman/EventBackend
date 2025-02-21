@@ -11,7 +11,8 @@ const app = express();
 const port = 3000;
 
 // Middleware
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // Enable CORS
 app.use(cors());

@@ -210,6 +210,480 @@ bookings.forEach(booking => {
       }
     }
   );
+
+  const vendors = [
+    {
+      name: "Faraz Usman",
+      email: "faraz@example.com1",
+      phone: "+1 989-438-3131",
+      created_at: "2022-12-19T18:12:00.000Z",
+      balance: 4220,
+    },
+    {
+      name: "Johnny Charles",
+      email: "johnny@example.com2",
+      phone: "+1 843-443-3282",
+      created_at: "2022-12-15T18:12:00.000Z",
+      balance: 1862,
+    },
+    {
+      name: "Robert George",
+      email: "robert@example.com3",
+      phone: "+1 917-409-0861",
+      created_at: "2022-12-04T12:38:00.000Z",
+      balance: 2789,
+    },
+    {
+      name: "Sharonda Letha",
+      email: "sharonda@example.com4",
+      phone: "+1 956-623-2880",
+      created_at: "2022-12-14T12:38:00.000Z",
+      balance: 6789,
+    },
+    {
+      name: "Faraz Usman",
+      email: "faraz@example.com5",
+      phone: "+1 989-438-3131",
+      created_at: "2022-12-19T18:12:00.000Z",
+      balance: 4220,
+    },
+    {
+      name: "Johnny Charles",
+      email: "johnny@example.com6",
+      phone: "+1 843-443-3282",
+      created_at: "2022-12-15T18:12:00.000Z",
+      balance: 1862,
+    },
+    {
+      name: "Robert George",
+      email: "robert@example.com7",
+      phone: "+1 917-409-0861",
+      created_at: "2022-12-04T12:38:00.000Z",
+      balance: 2789,
+    },
+    {
+      name: "Sharonda Letha",
+      email: "sharonda@example.com8",
+      phone: "+1 956-623-2880",
+      created_at: "2022-12-14T12:38:00.000Z",
+      balance: 6789,
+    },
+    {
+      name: "Faraz Usman",
+      email: "faraz@example.com9",
+      phone: "+1 989-438-3131",
+      created_at: "2022-12-19T18:12:00.000Z",
+      balance: 4220,
+    },
+    {
+      name: "Johnny Charles",
+      email: "johnny@example.com10",
+      phone: "+1 843-443-3282",
+      created_at: "2022-12-15T18:12:00.000Z",
+      balance: 1862,
+    },
+    {
+      name: "Robert George",
+      email: "robert@example.com11",
+      phone: "+1 917-409-0861",
+      created_at: "2022-12-04T12:38:00.000Z",
+      balance: 2789,
+    },
+    {
+      name: "Sharonda Letha",
+      email: "sharonda@example.com12",
+      phone: "+1 956-623-2880",
+      created_at: "2022-12-14T12:38:00.000Z",
+      balance: 6789,
+    },
+    {
+      name: "Faraz Usman",
+      email: "faraz@example.com13",
+      phone: "+1 989-438-3131",
+      created_at: "2022-12-19T18:12:00.000Z",
+      balance: 4220,
+    },
+    {
+      name: "Johnny Charles",
+      email: "johnny@example.com14",
+      phone: "+1 843-443-3282",
+      created_at: "2022-12-15T18:12:00.000Z",
+      balance: 1862,
+    },
+    {
+      name: "Robert George",
+      email: "robert@example.com15",
+      phone: "+1 917-409-0861",
+      created_at: "2022-12-04T12:38:00.000Z",
+      balance: 2789,
+    },
+    {
+      name: "Sharonda Letha",
+      email: "sharonda@example.com16",
+      phone: "+1 956-623-2880",
+      created_at: "2022-12-14T12:38:00.000Z",
+      balance: 6789,
+    },
+  ];
+
+  vendors.forEach((vendor) => {
+    db.run(
+      `INSERT INTO vendors (name, email, phone, created_at, balance) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [
+        vendor.name,
+        vendor.email,
+        vendor.phone,
+        vendor.created_at,
+        vendor.balance,
+      ],
+      (err) => {
+        if (err) {
+          console.error("Error inserting vendor:", err.message);
+        }
+      }
+    );
+  });
+
+  const units= [
+    {
+      "unit_name": "Kilogram",
+      "symbol": "kg"        
+    },
+    {
+      "unit_name": "Gram",
+      "symbol": "g"  
+    },
+    {
+      "unit_name": "Liter",
+      "symbol": "l"  
+    },
+    {
+      "unit_name": "Milliliter",
+      "symbol": "ml"  
+    },
+    {
+      "unit_name": "Pack",
+      "symbol": "pk"  
+    },
+    {
+      "unit_name": "Piece",
+      "symbol": "pc"  
+    },
+    {
+      "unit_name": "Kilogram",
+      "symbol": "kg"  
+    },
+    {
+      "unit_name": "Gram",
+      "symbol": "g"  
+    },
+    {
+      "unit_name": "Liter",
+      "symbol": "l"  
+    }
+  ];
+  units.forEach(unit => {
+    db.run(
+      `INSERT INTO units (unit_name, symbol) VALUES (?, ?)`,
+      [unit.unit_name, unit.symbol],
+      function (err) {
+        if (err) {
+          console.error("Error inserting unit:", err.message);
+        } else {
+          console.log(`Inserted unit: ${unit.unit_name}`);
+        }
+      }
+    );
+  });
+
+  const categories = [
+    {
+      "category": "Advertising",
+      "img": "assets/img/category/category-01.jpg",
+      "total": 60
+    },
+    {
+      "category": "Food",
+      "img": "assets/img/category/category-02.jpg",
+      "total": 55
+    },
+    {
+      "category": "Marketing",
+      "img": "assets/img/category/category-03.jpg",
+      "total":  70
+    },
+   
+    {
+      "category": "Repairs",
+      "img": "assets/img/category/category-04.jpg",
+      "total":  82
+    },
+    {
+      "category": "Software",
+      "img": "assets/img/category/category-05.jpg",
+      "total": 26
+    },
+   
+    {
+      "category": "Stationary",
+      "img": "assets/img/category/category-06.jpg",
+      "total": 60
+    },
+    {
+      "category": "Advertising",
+      "img": "assets/img/category/category-01.jpg",
+      "total": 60
+    },
+    {
+      "category": "Food",
+      "img": "assets/img/category/category-02.jpg",
+      "total": 55
+    },
+    {
+      "category": "Marketing",
+      "img": "assets/img/category/category-03.jpg",
+      "total":  70
+    }
+  ];
+
+  categories.forEach(category => {
+    db.run(
+      `INSERT INTO category (category, img, total) VALUES (?, ?, ?)`,
+      [category.category, category.img, category.total],
+      function (err) {
+        if (err) {
+          console.error("Error inserting categoty:", err.message);
+        } else {
+          console.log(`Inserted unit: ${category.category}`);
+        }
+      }
+    );
+  });
+
+  const products = [
+    {
+    "item": "Lenovo 3rd Generation",
+    "code": "P125389",
+      "category": "3",
+    "units": "1",
+    "quantity": "2",
+    "sellingPrice": "$253.00",
+    "purchasePrice": "$248.00",
+    "img": "assets/img/sales-return1.svg"
+  },
+  {
+    "item": "Nike Jordan",
+    "code": "P125390",
+    "category": "3",
+    "units": "1",
+    "quantity": "4",
+    "sellingPrice": "$360.00",
+    "purchasePrice": "$350.00",
+    "img": "assets/img/sales-return2.svg"
+  },
+  {
+    "item": "Apple Series 5 Watch",
+    "code": "P125391",
+    "category": "3",
+    "units": "1",
+    "quantity": "7",
+    "sellingPrice": "$724.00",
+    "purchasePrice": "$700.00",
+    "img": "assets/img/sales-return3.svg"
+  },
+  {
+    "item": "Amazon Echo Dot",
+    "code": "P125392",
+    "category": "3",
+    "units": "1",
+    "quantity": "3",
+    "sellingPrice": "$210.00",
+    "purchasePrice": "$200.00",
+    "img": "assets/img/sales-return4.svg"
+  },
+  {
+    "item": "Lobar Handy",
+    "code": "P125393",
+    "category": "3",
+    "units": "1",
+    "quantity": "1",
+    "sellingPrice": "$155.00",
+    "purchasePrice": "$150.00",
+    "img": "assets/img/sales-return5.svg"
+  },
+  {
+    "item": "Woodcraft Sandal",
+    "code": "P125394",
+    "category": "3",
+    "units": "1",
+    "quantity": "2",
+    "sellingPrice": "$253.00",
+    "purchasePrice": "$248.00",
+    "img": "assets/img/sales-return6.svg"
+  },
+  {
+    "item": "Black Slim 200",
+    "code": "P125394",
+    "category": "3",
+    "units": "1",
+    "quantity": "2",
+    "sellingPrice": "$253.00",
+    "purchasePrice": "$248.00",
+    "img": "assets/img/sales-return7.svg"
+  },
+  {
+    "item": "Red Premium Handy",
+    "code": "P125394",
+    "category": "3",
+    "units": "1",
+    "quantity": "2",
+    "sellingPrice": "$253.00",
+    "purchasePrice": "$248.00",
+    "img": "assets/img/sales-return8.svg"
+  },
+  {
+    "item": "Bold V3.2",
+    "code": "P125394",
+    "category": "3",
+    "units": "1",
+    "quantity": "2",
+    "sellingPrice": "$253.00",
+    "purchasePrice": "$248.00",
+    "img": "assets/img/sales-return9.svg"
+  },
+  {
+    "item": "Iphone 14 Pro",
+    "code": "P125394",
+    "category": "3",
+    "units": "1",
+    "quantity": "2",
+    "sellingPrice": "$253.00",
+    "purchasePrice": "$248.00",
+    "img": "assets/img/sales-return10.svg"
+  }];
+
+  products.forEach(product => {
+    db.run(
+      `INSERT INTO product (item, code, category, unit, quantity, sellingPrice, purchasePrice, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [product.item, product.code, product.category, product.units, product.quantity, product.purchasePrice, product.sellingPrice, product.img],
+      function (err) {
+        if (err) {
+          console.error("Error inserting product:", err.message);
+        } else {
+          console.log(`Inserted unit: ${product.item}`);
+        }
+      }
+    );
+  });
+
+  const dummyPurchases = [
+    {
+      purch_id: 12345,
+      vendor_id: 1,
+      purchase_date: "2025-02-10",
+      due_date: "2025-02-20",
+      reference_no: "REF12345",
+      invoice_sr_no: "INV001",
+      products: JSON.stringify([
+        {
+          id: 9,
+          item: "Iphone 14 Pro",
+          category: "Marketing",
+          unit: "Kilogram",
+          quantity: 2,
+          Price: "$248.00",
+        },
+        {
+          id: 8,
+          item: "Red Premium Handy",
+          unit: "Kilogram",
+          quantity: 2,
+          Price: "$248.00",
+        },
+      ]),
+      total_amount: 496.0,
+      signature_text: "John Doe",
+      signature_img: "signature1.png",
+    },
+    {
+      purch_id: 12345,
+      vendor_id: 2,
+      purchase_date: "2025-02-12",
+      due_date: "2025-02-22",
+      reference_no: "REF67890",
+      invoice_sr_no: "INV002",
+      products: JSON.stringify([
+        {
+          id: 10,
+          item: "Samsung Galaxy S23",
+          category: "Electronics",
+          unit: "Piece",
+          quantity: 1,
+          Price: "$899.00",
+        },
+      ]),
+      total_amount: 899.0,
+      signature_text: "Alice Brown",
+      signature_img: "signature2.png",
+    },
+    {
+      purch_id: 12345,
+      vendor_id: 3,
+      purchase_date: "2025-02-14",
+      due_date: "2025-02-24",
+      reference_no: "REF54321",
+      invoice_sr_no: "INV003",
+      products: JSON.stringify([
+        {
+          id: 12,
+          item: "MacBook Pro M3",
+          category: "Electronics",
+          unit: "Piece",
+          quantity: 1,
+          Price: "$2,199.00",
+        },
+        {
+          id: 14,
+          item: "Wireless Keyboard",
+          category: "Accessories",
+          unit: "Piece",
+          quantity: 1,
+          Price: "$99.00",
+        },
+      ]),
+      total_amount: 2298.0,
+      signature_text: "Robert Smith",
+      signature_img: "signature3.png",
+    },
+  ];
+  
+  // Insert dummy data into the database
+  dummyPurchases.forEach((purchase) => {
+    db.run(
+      `INSERT INTO purchase (vendor_id, purchase_date, due_date, reference_no, invoice_sr_no, products, total_amount, signature_text, signature_img) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        purchase.vendor_id,
+        purchase.purchase_date,
+        purchase.due_date,
+        purchase.reference_no,
+        purchase.invoice_sr_no,
+        purchase.products,
+        purchase.total_amount,
+        purchase.signature_text,
+        purchase.signature_img,
+      ],
+      function (err) {
+        if (err) {
+          console.error("Error inserting purchase:", err.message);
+        } else {
+          console.log(`Inserted purchase with ID: ${this.lastID}`);
+        }
+      }
+    );
+  });
+
 };
 
 // Initialize the database
