@@ -30,8 +30,8 @@ router.get("/", (req, res) => {
       category: product.category_name, // Using category_name from categories table
       unit: product.unit_name, // Using unit_name from units table
       quantity: product.quantity,
-      sellingPrice: product.sellingPrice,
-      purchasePrice: product.purchasePrice,
+      sellingPrice: `$${parseFloat((product.sellingPrice || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
+      purchasePrice: `$${parseFloat((product.purchasePrice || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
       img: product.img,
       description: product.description
     }));
