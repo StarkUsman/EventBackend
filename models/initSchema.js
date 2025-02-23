@@ -132,14 +132,17 @@ const initDatabase = () => {
     );`,
     
     `CREATE TABLE IF NOT EXISTS purchase (
-      purch_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      vendor_id INTEGER NOT NULL,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      purch_id INTEGER NOT NULL,
+      vendor JSON NOT NULL,
+      total_amount REAL NOT NULL,
+      paymentmode TEXT NOT NULL,
       purchase_date TEXT NOT NULL,
       due_date TEXT NOT NULL,
+      status TEXT NOT NULL,
       reference_no TEXT,
       invoice_sr_no TEXT,
       products JSON NOT NULL,
-      total_amount REAL NOT NULL,
       signature_text TEXT,
       signature_img TEXT
     );`,

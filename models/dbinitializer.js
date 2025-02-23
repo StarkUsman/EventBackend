@@ -579,110 +579,119 @@ bookings.forEach(booking => {
 
   const dummyPurchases = [
     {
-      purch_id: 12345,
-      vendor_id: 1,
-      purchase_date: "2025-02-10",
-      due_date: "2025-02-20",
-      reference_no: "REF12345",
-      invoice_sr_no: "INV001",
-      products: JSON.stringify([
+      purch_id: 101,
+      vendor: {
+        id: 16,
+        sNo: 1,
+        name: "Robert George",
+        email: "robert@example.com15",
+        phone: "+1 917-409-0861",
+        created: "Dec 04, 2022, 05:38 PM",
+        balance: "$2789.00"
+      },
+      total_amount: 1440.00,
+      paymentmode: "Credit Card",
+      purchase_date: "2025-02-15",
+      due_date: "2025-03-01",
+      status: "Paid",
+      reference_no: "REF101",
+      invoice_sr_no: "INV-2025-101",
+      products: [
         {
-          id: 9,
-          item: "Iphone 14 Pro",
+          sNo: 1,
+          id: 10,
+          item: "Nike Jordan",
+          code: "P125390",
           category: "Marketing",
           unit: "Kilogram",
+          quantity: 4,
+          sellingPrice: "$350.00",
+          purchasePrice: "$360.00",
+          img: "assets/img/sales-return2.svg",
+          description: null
+        },
+        {
+          sNo: 2,
+          id: 11,
+          item: "Adidas Ultraboost",
+          code: "P125391",
+          category: "Sportswear",
+          unit: "Pair",
           quantity: 2,
-          Price: "$248.00",
-        },
-        {
-          id: 8,
-          item: "Red Premium Handy",
-          unit: "Kilogram",
-          quantity: 2,
-          Price: "$248.00",
-        },
-      ]),
-      total_amount: 496.0,
-      signature_text: "John Doe",
-      signature_img: "signature1.png",
-    },
-    {
-      purch_id: 12345,
-      vendor_id: 2,
-      purchase_date: "2025-02-12",
-      due_date: "2025-02-22",
-      reference_no: "REF67890",
-      invoice_sr_no: "INV002",
-      products: JSON.stringify([
-        {
-          id: 10,
-          item: "Samsung Galaxy S23",
-          category: "Electronics",
-          unit: "Piece",
-          quantity: 1,
-          Price: "$899.00",
-        },
-      ]),
-      total_amount: 899.0,
-      signature_text: "Alice Brown",
-      signature_img: "signature2.png",
-    },
-    {
-      purch_id: 12345,
-      vendor_id: 3,
-      purchase_date: "2025-02-14",
-      due_date: "2025-02-24",
-      reference_no: "REF54321",
-      invoice_sr_no: "INV003",
-      products: JSON.stringify([
-        {
-          id: 12,
-          item: "MacBook Pro M3",
-          category: "Electronics",
-          unit: "Piece",
-          quantity: 1,
-          Price: "$2,199.00",
-        },
-        {
-          id: 14,
-          item: "Wireless Keyboard",
-          category: "Accessories",
-          unit: "Piece",
-          quantity: 1,
-          Price: "$99.00",
-        },
-      ]),
-      total_amount: 2298.0,
-      signature_text: "Robert Smith",
-      signature_img: "signature3.png",
-    },
-  ];
-  
-  // Insert dummy data into the database
-  dummyPurchases.forEach((purchase) => {
-    db.run(
-      `INSERT INTO purchase (vendor_id, purchase_date, due_date, reference_no, invoice_sr_no, products, total_amount, signature_text, signature_img) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        purchase.vendor_id,
-        purchase.purchase_date,
-        purchase.due_date,
-        purchase.reference_no,
-        purchase.invoice_sr_no,
-        purchase.products,
-        purchase.total_amount,
-        purchase.signature_text,
-        purchase.signature_img,
-      ],
-      function (err) {
-        if (err) {
-          console.error("Error inserting purchase:", err.message);
-        } else {
-          console.log(`Inserted purchase with ID: ${this.lastID}`);
+          sellingPrice: "$200.00",
+          purchasePrice: "$210.00",
+          img: "assets/img/sales-return3.svg",
+          description: null
         }
+      ],
+      signature_text: "Approved by Manager",
+      signature_img: "assets/img/signature.svg"
+    },
+    {
+      purch_id: 102,
+      vendor: {
+        id: 17,
+        sNo: 2,
+        name: "Johnny Charles",
+        email: "johnny@example.com",
+        phone: "+1 843-443-3282",
+        created: "Dec 15, 2022, 06:12 PM",
+        balance: "$1862.00"
+      },
+      total_amount: 720.00,
+      paymentmode: "Bank Transfer",
+      purchase_date: "2025-02-16",
+      due_date: "2025-03-05",
+      status: "Pending",
+      reference_no: "REF102",
+      invoice_sr_no: "INV-2025-102",
+      products: [
+        {
+          sNo: 1,
+          id: 12,
+          item: "Puma Running Shoes",
+          code: "P125392",
+          category: "Footwear",
+          unit: "Pair",
+          quantity: 3,
+          sellingPrice: "$120.00",
+          purchasePrice: "$130.00",
+          img: "assets/img/sales-return4.svg",
+          description: null
+        }
+      ],
+      signature_text: "Awaiting Approval",
+      signature_img: "assets/img/signature2.svg"
+    }
+  ];  
+  
+  dummyPurchases.forEach((purchase) => {
+  db.run(
+    `INSERT INTO purchase (purch_id, vendor, total_amount, paymentmode, purchase_date, due_date, status, reference_no, invoice_sr_no, products, signature_text, signature_img) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      purchase.purch_id,
+      JSON.stringify(purchase.vendor), // Convert vendor object to JSON string
+      purchase.total_amount,
+      purchase.paymentmode,
+      purchase.purchase_date,
+      purchase.due_date,
+      purchase.status,
+      purchase.reference_no,
+      purchase.invoice_sr_no,
+      JSON.stringify(purchase.products), // Convert products array to JSON string
+      purchase.signature_text,
+      purchase.signature_img
+    ],
+    function (err) {
+      if (err) {
+        console.error("Error inserting purchase:", err.message);
+      } else {
+        console.log(`Purchase ${purchase.purch_id} inserted successfully.`);
       }
-    );
-  });
+    }
+  );
+});
 
 };
 

@@ -1,0 +1,68 @@
+{
+    "purch_id": "1234567",
+    "vendor": {
+        "id": 12,
+        "sNo": 4,
+        "name": "Faraz Usman",
+        "email": "faraz@example.com13",
+        "phone": "+1 989-438-3131",
+        "created": "Dec 19, 2022, 11:12 PM",
+        "balance": "$4220.00"
+    },
+    "purchase_date": "2025-02-12T19:00:00.000Z",
+    "due_date": "2025-02-12T19:00:00.000Z",
+    "reference_no": "03090016928",
+    "invoice_sr_no": "1111111",
+    "signature_text": "Faraz USMAN sign",
+    "products": [
+        {
+            "sNo": 5,
+            "id": 6,
+            "item": "Red Premium Handy",
+            "code": "P125394",
+            "category": "Software",
+            "unit": "Milliliter",
+            "quantity": 10000,
+            "sellingPrice": "$248.00",
+            "purchasePrice": "$200",
+            "img": "assets/img/sales-return8.svg",
+            "description": null,
+            "amount": 2000000,
+            "price": 200,
+            "discount": 0,
+            "tax": "0"
+        },
+        {
+            "sNo": 9,
+            "id": 2,
+            "item": "Apple Series 5 Watch",
+            "code": "P125391",
+            "category": "Software",
+            "unit": "Milliliter",
+            "quantity": 1,
+            "sellingPrice": "$700.00",
+            "purchasePrice": "$724.00",
+            "img": "assets/img/sales-return3.svg",
+            "description": null,
+            "amount": 724
+        },
+        {
+            "sNo": 6,
+            "id": 5,
+            "item": "Black Slim 200",
+            "code": "P125394",
+            "category": "Software",
+            "unit": "Milliliter",
+            "quantity": 100,
+            "sellingPrice": "$248.00",
+            "purchasePrice": "$900",
+            "img": "assets/img/sales-return7.svg",
+            "description": null,
+            "amount": 90000,
+            "price": 900,
+            "discount": 0,
+            "tax": "0"
+        }
+    ],
+    "total_amount": 2090724
+}

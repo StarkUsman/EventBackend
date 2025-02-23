@@ -114,4 +114,26 @@ router.delete("/:id", (req, res) => {
   });
 });
 
+router.post("/addQuantity", (req, res) => {
+  const { id, quantity } = req.body;
+
+  if (!id || !quantity) {
+    return res.status(400).json({ error: "Required fields are missing" });
+  }
+
+  db.run(
+    `UPDATE product SET quantity = quantity + ? WHERE id = ?`,
+    [quantity, id],
+    function (err) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      res.json({ message: "Product quantity updated successfully" });
+    }
+  );
+});
+
 module.exports = router;

@@ -9,17 +9,20 @@ router.get("/", (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    // Format response similar to units API
+    // Format response like units API
     const formattedData = rows.map((purchase, index) => ({
       sNo: index + 1,
+      id: purchase.id,
       purch_id: purchase.purch_id,
-      vendor_id: purchase.vendor_id,
+      vendor: JSON.parse(purchase.vendor), // Convert JSON string to object
+      total_amount: purchase.total_amount,
+      paymentmode: purchase.paymentmode,
       purchase_date: purchase.purchase_date,
       due_date: purchase.due_date,
+      status: purchase.status,
       reference_no: purchase.reference_no,
       invoice_sr_no: purchase.invoice_sr_no,
       products: JSON.parse(purchase.products), // Convert JSON string to object
-      total_amount: purchase.total_amount,
       signature_text: purchase.signature_text,
       signature_img: purchase.signature_img
     }));
@@ -28,17 +31,18 @@ router.get("/", (req, res) => {
   });
 });
 
-// 🚀 Get a purchase by ID
-router.get("/:purch_id", (req, res) => {
-  const { purch_id } = req.params;
-  db.get("SELECT * FROM purchase WHERE purch_id = ?", [purch_id], (err, row) => {
+// 🚀 Get a single purchase by ID
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  db.get("SELECT * FROM purchase WHERE id = ?", [id], (err, row) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
     if (!row) {
       return res.status(404).json({ error: "Purchase not found" });
     }
-    row.products = JSON.parse(row.products); // Convert stored JSON string to object
+    row.vendor = JSON.parse(row.vendor);
+    row.products = JSON.parse(row.products);
     res.json(row);
   });
 });
@@ -46,88 +50,104 @@ router.get("/:purch_id", (req, res) => {
 // 🚀 Create a new purchase
 router.post("/", (req, res) => {
   const {
-    vendor_id,
+    purch_id,
+    vendor,
+    total_amount,
+    paymentmode,
     purchase_date,
     due_date,
+    status,
     reference_no,
     invoice_sr_no,
     products,
-    total_amount,
     signature_text,
-    signature_img,
+    signature_img
   } = req.body;
 
-  if (!vendor_id || !purchase_date || !due_date || !products || !total_amount) {
+  if (!purch_id || !vendor || !total_amount || !paymentmode || !purchase_date || !due_date || !status || !products) {
     return res.status(400).json({ error: "Required fields are missing" });
   }
 
   db.run(
-    `INSERT INTO purchase (vendor_id, purchase_date, due_date, reference_no, invoice_sr_no, products, total_amount, signature_text, signature_img) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO purchase (purch_id, vendor, total_amount, paymentmode, purchase_date, due_date, status, reference_no, invoice_sr_no, products, signature_text, signature_img) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
-      vendor_id,
+      purch_id,
+      JSON.stringify(vendor), // Convert to JSON string
+      total_amount,
+      paymentmode,
       purchase_date,
       due_date,
+      status,
       reference_no || null,
       invoice_sr_no || null,
-      JSON.stringify(products), // Store as JSON string
-      total_amount,
+      JSON.stringify(products), // Convert to JSON string
       signature_text || null,
-      signature_img || null,
+      signature_img || null
     ],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
       res.status(201).json({
-        purch_id: this.lastID,
-        vendor_id,
+        id: this.lastID,
+        purch_id,
+        vendor,
+        total_amount,
+        paymentmode,
         purchase_date,
         due_date,
+        status,
         reference_no,
         invoice_sr_no,
         products,
-        total_amount,
         signature_text,
-        signature_img,
+        signature_img
       });
     }
   );
 });
 
 // 🚀 Update a purchase
-router.put("/:purch_id", (req, res) => {
-  const { purch_id } = req.params;
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
   const {
-    vendor_id,
+    purch_id,
+    vendor,
+    total_amount,
+    paymentmode,
     purchase_date,
     due_date,
+    status,
     reference_no,
     invoice_sr_no,
     products,
-    total_amount,
     signature_text,
-    signature_img,
+    signature_img
   } = req.body;
 
-  if (!vendor_id || !purchase_date || !due_date || !products || !total_amount) {
+  if (!purch_id || !vendor || !total_amount || !paymentmode || !purchase_date || !due_date || !status || !products) {
     return res.status(400).json({ error: "Required fields are missing" });
   }
 
   db.run(
-    `UPDATE purchase SET vendor_id = ?, purchase_date = ?, due_date = ?, reference_no = ?, invoice_sr_no = ?, 
-     products = ?, total_amount = ?, signature_text = ?, signature_img = ? WHERE purch_id = ?`,
+    `UPDATE purchase 
+     SET purch_id = ?, vendor = ?, total_amount = ?, paymentmode = ?, purchase_date = ?, due_date = ?, status = ?, reference_no = ?, invoice_sr_no = ?, products = ?, signature_text = ?, signature_img = ? 
+     WHERE id = ?`,
     [
-      vendor_id,
+      purch_id,
+      JSON.stringify(vendor),
+      total_amount,
+      paymentmode,
       purchase_date,
       due_date,
-      reference_no || null,
-      invoice_sr_no || null,
-      JSON.stringify(products), // Store as JSON string
-      total_amount,
-      signature_text || null,
-      signature_img || null,
-      purch_id,
+      status,
+      reference_no,
+      invoice_sr_no,
+      JSON.stringify(products),
+      signature_text,
+      signature_img,
+      id
     ],
     function (err) {
       if (err) {
@@ -142,10 +162,10 @@ router.put("/:purch_id", (req, res) => {
 });
 
 // 🚀 Delete a purchase
-router.delete("/:purch_id", (req, res) => {
-  const { purch_id } = req.params;
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
 
-  db.run(`DELETE FROM purchase WHERE purch_id = ?`, [purch_id], function (err) {
+  db.run(`DELETE FROM purchase WHERE id = ?`, [id], function (err) {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

@@ -16,6 +16,7 @@ const unitsRoutes = require("./APIs/units");
 const categoryRoutes = require("./APIs/category");
 const productRoutes = require("./APIs/products")
 const purchaseRoutes = require("./APIs/purchase");
+const inventoryRoutes = require("./APIs/inventory");
 
 // Define routes for all tables
 router.use("/halls", hallsRoutes);
@@ -32,5 +33,6 @@ router.use("/units", unitsRoutes);
 router.use("/category", categoryRoutes);
 router.use("/products", productRoutes);
 router.use("/purchase", purchaseRoutes);
+router.use("/inventory", inventoryRoutes);
 
 module.exports = router;

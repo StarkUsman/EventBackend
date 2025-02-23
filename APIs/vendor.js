@@ -72,13 +72,8 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { name, email, phone, balance } = req.body;
-  const formatted_balance = balance.replace(/[^0-9.]/g, '');
-  balance_formatted = parseFloat(formatted_balance);
-  console.log("id", id);
-  console.log("name", name);
-  console.log("email", email);
-  console.log("phone", phone);
-  console.log("balance", balance);
+  balance_formatted = parseFloat(balance.toString().replace(/[^0-9.]/g, ""));
+  if (isNaN(balance_formatted)) balance_formatted = 0;
 
   db.run(
     `UPDATE vendors SET 
