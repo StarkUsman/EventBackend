@@ -99,11 +99,23 @@ const initDatabase = () => {
     `CREATE TABLE IF NOT EXISTS vendors (
         vendor_id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        phone TEXT NOT NULL,
+        email TEXT,
+        phone TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         balance REAL DEFAULT 0
       );`,
+
+    `CREATE TABLE IF NOT EXISTS ledger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL CHECK(name IN ('SRV', 'CPV', 'BPV', 'GV')),
+      purch_id INTEGER NOT NULL,
+      vendor_id INTEGER NOT NULL,
+      amountDebit REAL NOT NULL,
+      amountCredit REAL NOT NULL,
+      balance REAL NOT NULL,
+      createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (vendor_id) REFERENCES vendors (vendor_id)
+    );`,
 
     `CREATE TABLE IF NOT EXISTS units (
       unit_id INTEGER PRIMARY KEY AUTOINCREMENT,

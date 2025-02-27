@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
           minute: "2-digit",
           hour12: true,
         }),
-        balance: `$${vendor.balance.toFixed(2)}`,
+        balance: `PKR${vendor.balance.toFixed(2)}`,
       }));
       res.json({ data: formattedData, totalData: formattedData.length });
     }
@@ -49,14 +49,14 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const { name, email, phone, balance } = req.body;
   
-  if (!name || !email || !phone) {
-    return res.status(400).json({ error: "Name, email, and phone are required." });
+  if (!name) {
+    return res.status(400).json({ error: "Name is required." });
   }
 
   db.run(
     `INSERT INTO vendors (name, email, phone, balance) 
      VALUES (?, ?, ?, ?)`,
-    [name, email, phone, balance || 0],
+    [name, email || null, phone || null, balance || 0],
     function (err) {
       if (err) {
         console.error("Error creating vendor:", err.message);
@@ -71,18 +71,15 @@ router.post("/", (req, res) => {
 // Update a vendor
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { name, email, phone, balance } = req.body;
-  balance_formatted = parseFloat(balance.toString().replace(/[^0-9.]/g, ""));
-  if (isNaN(balance_formatted)) balance_formatted = 0;
+  const { name, email, phone } = req.body;
 
   db.run(
     `UPDATE vendors SET 
       name = ?, 
       email = ?, 
-      phone = ?, 
-      balance = ? 
+      phone = ? 
      WHERE vendor_id = ?`,
-    [name, email, phone, balance_formatted, id],
+    [name, email, phone, id],
     function (err) {
       if (err) {
         console.error(`Error updating vendor with ID ${id}:`, err.message);
