@@ -4,7 +4,7 @@ const db = require("../models/database");
 
 // 🚀 Get all purchases
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM purchase", [], (err, rows) => {
+  db.all("SELECT * FROM purchase ORDER BY id DESC", [], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -157,6 +157,29 @@ router.put("/:id", (req, res) => {
         return res.status(404).json({ error: "Purchase not found" });
       }
       res.json({ message: "Purchase updated successfully" });
+    }
+  );
+});
+
+router.put("/status/:id", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({ error: "Required fields are missing" });
+  }
+
+  db.run(
+    `UPDATE purchase SET status = ? WHERE id = ?`,
+    [status, id],
+    function (err) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Purchase not found" });
+      }
+      res.json({ message: "Purchase status updated successfully" });
     }
   );
 });

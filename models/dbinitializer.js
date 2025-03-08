@@ -217,112 +217,35 @@ bookings.forEach(booking => {
       email: "faraz@example.com1",
       phone: "+1 989-438-3131",
       created_at: "2022-12-19T18:12:00.000Z",
-      balance: 4220,
-    },
-    {
-      name: "Johnny Charles",
-      email: "johnny@example.com2",
-      phone: "+1 843-443-3282",
-      created_at: "2022-12-15T18:12:00.000Z",
-      balance: 1862,
-    },
-    {
-      name: "Robert George",
-      email: "robert@example.com3",
-      phone: "+1 917-409-0861",
-      created_at: "2022-12-04T12:38:00.000Z",
-      balance: 2789,
-    },
-    {
-      name: "Sharonda Letha",
-      email: "sharonda@example.com4",
-      phone: "+1 956-623-2880",
-      created_at: "2022-12-14T12:38:00.000Z",
-      balance: 6789,
-    },
-    {
-      name: "Faraz Usman",
-      email: "faraz@example.com5",
-      phone: "+1 989-438-3131",
-      created_at: "2022-12-19T18:12:00.000Z",
-      balance: 4220,
-    },
-    {
-      name: "Johnny Charles",
-      email: "johnny@example.com6",
-      phone: "+1 843-443-3282",
-      created_at: "2022-12-15T18:12:00.000Z",
-      balance: 1862,
-    },
-    {
-      name: "Robert George",
-      email: "robert@example.com7",
-      phone: "+1 917-409-0861",
-      created_at: "2022-12-04T12:38:00.000Z",
-      balance: 2789,
-    },
-    {
-      name: "Sharonda Letha",
-      email: "sharonda@example.com8",
-      phone: "+1 956-623-2880",
-      created_at: "2022-12-14T12:38:00.000Z",
-      balance: 6789,
-    },
-    {
-      name: "Faraz Usman",
-      email: "faraz@example.com9",
-      phone: "+1 989-438-3131",
-      created_at: "2022-12-19T18:12:00.000Z",
-      balance: 4220,
+      balance: 0,
     },
     {
       name: "Johnny Charles",
       email: "johnny@example.com10",
       phone: "+1 843-443-3282",
       created_at: "2022-12-15T18:12:00.000Z",
-      balance: 1862,
+      balance: 0,
     },
     {
       name: "Robert George",
       email: "robert@example.com11",
       phone: "+1 917-409-0861",
       created_at: "2022-12-04T12:38:00.000Z",
-      balance: 2789,
+      balance: 0,
     },
     {
       name: "Sharonda Letha",
       email: "sharonda@example.com12",
       phone: "+1 956-623-2880",
       created_at: "2022-12-14T12:38:00.000Z",
-      balance: 6789,
-    },
-    {
-      name: "Faraz Usman",
-      email: "faraz@example.com13",
-      phone: "+1 989-438-3131",
-      created_at: "2022-12-19T18:12:00.000Z",
-      balance: 4220,
+      balance: 0,
     },
     {
       name: "Johnny Charles",
       email: "johnny@example.com14",
       phone: "+1 843-443-3282",
       created_at: "2022-12-15T18:12:00.000Z",
-      balance: 1862,
-    },
-    {
-      name: "Robert George",
-      email: "robert@example.com15",
-      phone: "+1 917-409-0861",
-      created_at: "2022-12-04T12:38:00.000Z",
-      balance: 2789,
-    },
-    {
-      name: "Sharonda Letha",
-      email: "sharonda@example.com16",
-      phone: "+1 956-623-2880",
-      created_at: "2022-12-14T12:38:00.000Z",
-      balance: 6789,
+      balance: 0,
     },
   ];
 
@@ -483,8 +406,8 @@ bookings.forEach(booking => {
       "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "$253.00",
-    "purchasePrice": "$248.00",
+    "sellingPrice": "253.00",
+    "purchasePrice": "248.00",
     "img": "assets/img/sales-return1.svg"
   },
   {
@@ -493,8 +416,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "4",
-    "sellingPrice": "$360.00",
-    "purchasePrice": "$350.00",
+    "sellingPrice": "360.00",
+    "purchasePrice": "350.00",
     "img": "assets/img/sales-return2.svg"
   },
   {
@@ -503,8 +426,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "7",
-    "sellingPrice": "$724.00",
-    "purchasePrice": "$700.00",
+    "sellingPrice": "724.00",
+    "purchasePrice": "700.00",
     "img": "assets/img/sales-return3.svg"
   },
   {
@@ -513,8 +436,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "3",
-    "sellingPrice": "$210.00",
-    "purchasePrice": "$200.00",
+    "sellingPrice": "210.00",
+    "purchasePrice": "200.00",
     "img": "assets/img/sales-return4.svg"
   },
   {
@@ -523,8 +446,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "1",
-    "sellingPrice": "$155.00",
-    "purchasePrice": "$150.00",
+    "sellingPrice": "155.00",
+    "purchasePrice": "150.00",
     "img": "assets/img/sales-return5.svg"
   },
   {
@@ -533,8 +456,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "$253.00",
-    "purchasePrice": "$248.00",
+    "sellingPrice": "253.00",
+    "purchasePrice": "248.00",
     "img": "assets/img/sales-return6.svg"
   },
   {
@@ -543,8 +466,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "$253.00",
-    "purchasePrice": "$248.00",
+    "sellingPrice": "253.00",
+    "purchasePrice": "248.00",
     "img": "assets/img/sales-return7.svg"
   },
   {
@@ -553,8 +476,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "$253.00",
-    "purchasePrice": "$248.00",
+    "sellingPrice": "253.00",
+    "purchasePrice": "248.00",
     "img": "assets/img/sales-return8.svg"
   },
   {
@@ -563,8 +486,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "$253.00",
-    "purchasePrice": "$248.00",
+    "sellingPrice": "253.00",
+    "purchasePrice": "248.00",
     "img": "assets/img/sales-return9.svg"
   },
   {
@@ -573,8 +496,8 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "$253.00",
-    "purchasePrice": "$248.00",
+    "sellingPrice": "253.00",
+    "purchasePrice": "248.00",
     "img": "assets/img/sales-return10.svg"
   }];
 
@@ -591,122 +514,6 @@ bookings.forEach(booking => {
       }
     );
   });
-
-  const dummyPurchases = [
-    {
-      purch_id: 101,
-      vendor: {
-        id: 16,
-        sNo: 1,
-        name: "Robert George",
-        email: "robert@example.com15",
-        phone: "+1 917-409-0861",
-        created: "Dec 04, 2022, 05:38 PM",
-        balance: "$2789.00"
-      },
-      total_amount: 1440.00,
-      paymentmode: "Credit Card",
-      purchase_date: "2025-02-15",
-      due_date: "2025-03-01",
-      status: "Paid",
-      reference_no: "REF101",
-      invoice_sr_no: "INV-2025-101",
-      products: [
-        {
-          sNo: 1,
-          id: 10,
-          item: "Nike Jordan",
-          code: "P125390",
-          category: "Marketing",
-          unit: "Kilogram",
-          quantity: 4,
-          sellingPrice: "$350.00",
-          purchasePrice: "$360.00",
-          img: "assets/img/sales-return2.svg",
-          description: null
-        },
-        {
-          sNo: 2,
-          id: 11,
-          item: "Adidas Ultraboost",
-          code: "P125391",
-          category: "Sportswear",
-          unit: "Pair",
-          quantity: 2,
-          sellingPrice: "$200.00",
-          purchasePrice: "$210.00",
-          img: "assets/img/sales-return3.svg",
-          description: null
-        }
-      ],
-      signature_text: "Approved by Manager",
-      signature_img: "assets/img/signature.svg"
-    },
-    {
-      purch_id: 102,
-      vendor: {
-        id: 17,
-        sNo: 2,
-        name: "Johnny Charles",
-        email: "johnny@example.com",
-        phone: "+1 843-443-3282",
-        created: "Dec 15, 2022, 06:12 PM",
-        balance: "$1862.00"
-      },
-      total_amount: 720.00,
-      paymentmode: "Bank Transfer",
-      purchase_date: "2025-02-16",
-      due_date: "2025-03-05",
-      status: "Pending",
-      reference_no: "REF102",
-      invoice_sr_no: "INV-2025-102",
-      products: [
-        {
-          sNo: 1,
-          id: 12,
-          item: "Puma Running Shoes",
-          code: "P125392",
-          category: "Footwear",
-          unit: "Pair",
-          quantity: 3,
-          sellingPrice: "$120.00",
-          purchasePrice: "$130.00",
-          img: "assets/img/sales-return4.svg",
-          description: null
-        }
-      ],
-      signature_text: "Awaiting Approval",
-      signature_img: "assets/img/signature2.svg"
-    }
-  ];  
-  
-  dummyPurchases.forEach((purchase) => {
-  db.run(
-    `INSERT INTO purchase (purch_id, vendor, total_amount, paymentmode, purchase_date, due_date, status, reference_no, invoice_sr_no, products, signature_text, signature_img) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      purchase.purch_id,
-      JSON.stringify(purchase.vendor), // Convert vendor object to JSON string
-      purchase.total_amount,
-      purchase.paymentmode,
-      purchase.purchase_date,
-      purchase.due_date,
-      purchase.status,
-      purchase.reference_no,
-      purchase.invoice_sr_no,
-      JSON.stringify(purchase.products), // Convert products array to JSON string
-      purchase.signature_text,
-      purchase.signature_img
-    ],
-    function (err) {
-      if (err) {
-        console.error("Error inserting purchase:", err.message);
-      } else {
-        console.log(`Purchase ${purchase.purch_id} inserted successfully.`);
-      }
-    }
-  );
-});
 
 };
 

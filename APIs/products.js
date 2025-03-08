@@ -30,8 +30,8 @@ router.get("/", (req, res) => {
       category: product.category_name, // Using category_name from categories table
       unit: product.unit_name, // Using unit_name from units table
       quantity: product.quantity,
-      sellingPrice: `$${parseFloat((product.sellingPrice || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
-      purchasePrice: `$${parseFloat((product.purchasePrice || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
+      sellingPrice: `PKR${parseFloat((product.sellingPrice || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
+      purchasePrice: `PKR${parseFloat((product.purchasePrice || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
       img: product.img,
       description: product.description
     }));
@@ -58,14 +58,14 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const { item, code, category, unit, quantity, sellingPrice, purchasePrice, img, description } = req.body;
 
-  if (!item || !unit || !quantity || !sellingPrice || !purchasePrice) {
+  if (!item || !unit || !sellingPrice || !purchasePrice) {
     return res.status(400).json({ error: "Required fields are missing" });
   }
 
   db.run(
     `INSERT INTO product (item, code, category, unit, quantity, sellingPrice, purchasePrice, img, description) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [item, code, category, unit, quantity, sellingPrice, purchasePrice, img || null, description || null],
+    [item, code, category, unit, quantity || 0, sellingPrice, purchasePrice, img || null, description || null],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -123,6 +123,28 @@ router.post("/addQuantity", (req, res) => {
 
   db.run(
     `UPDATE product SET quantity = quantity + ? WHERE id = ?`,
+    [quantity, id],
+    function (err) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      res.json({ message: "Product quantity updated successfully" });
+    }
+  );
+});
+
+router.post("/removeQuantity", (req, res) => {
+  const { id, quantity } = req.body;
+
+  if (!id || !quantity) {
+    return res.status(400).json({ error: "Required fields are missing" });
+  }
+
+  db.run(
+    `UPDATE product SET quantity = quantity - ? WHERE id = ?`,
     [quantity, id],
     function (err) {
       if (err) {

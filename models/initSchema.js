@@ -107,7 +107,7 @@ const initDatabase = () => {
 
     `CREATE TABLE IF NOT EXISTS ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL CHECK(name IN ('SRV', 'CPV', 'BPV', 'GV')),
+      name TEXT NOT NULL CHECK(name IN ('SRV', 'CPV', 'BPV', 'GV', 'ER')),
       purch_id INTEGER NOT NULL,
       vendor_id INTEGER NOT NULL,
       amountDebit REAL NOT NULL,
@@ -136,7 +136,7 @@ const initDatabase = () => {
       code TEXT,
       category TEXT NOT NULL,
       unit TEXT NOT NULL,
-      quantity INTEGER NOT NULL,
+      quantity INTEGER,
       sellingPrice REAL NOT NULL,
       purchasePrice REAL NOT NULL,
       img TEXT,
@@ -154,6 +154,17 @@ const initDatabase = () => {
       status TEXT NOT NULL,
       reference_no TEXT,
       invoice_sr_no TEXT,
+      products JSON NOT NULL,
+      signature_text TEXT,
+      signature_img TEXT
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS expense (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      purch_id INTEGER NOT NULL,
+      total_amount REAL NOT NULL,
+      purchase_date TEXT NOT NULL,
+      reference_no TEXT,
       products JSON NOT NULL,
       signature_text TEXT,
       signature_img TEXT

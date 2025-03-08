@@ -116,9 +116,8 @@ router.get("/:vendor_id", (req, res) => {
 
 // Create a new ledger entry
 router.post("/", (req, res) => {
-  const { name, purch_id, vendor_id, amountDebit, amountCredit, balance } = req.body;
-
-  if (!name || !vendor_id || amountDebit === undefined || amountCredit === undefined || balance === undefined || !purch_id) {
+  const { name, purch_id, vendor_id, amountDebit, amountCredit } = req.body;
+  if (!name || !vendor_id || (amountDebit === undefined && amountCredit === undefined) || !purch_id) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
@@ -128,56 +127,102 @@ router.post("/", (req, res) => {
     return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV." });
   }
 
-  db.run(
-    `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [name, purch_id, vendor_id, amountDebit, amountCredit, balance],
-    function (err) {
-      if (err) {
-        console.error("Error creating ledger entry:", err.message);
-        res.status(500).json({ error: err.message });
-      } else {
+  // Fetch vendor balance and proceed only after getting the result
+  db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [vendor_id], (err, row) => {
+    if (err) {
+      console.error("Error fetching vendor balance:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    let balance = row ? row.balance : 0; // Ensure balance is initialized correctly
+
+    // Update balance based on transaction type
+    if (name === "SRV") {
+      balance -= amountDebit;
+    } else {
+      balance += amountCredit;
+    }
+
+    // Insert into ledger **inside** the callback to ensure correct balance usage
+    db.run(
+      `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance],
+      function (err) {
+        if (err) {
+          console.error("Error creating ledger entry:", err.message);
+          return res.status(500).json({ error: err.message });
+        }
+
+        // Now update vendor balance
+        db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, vendor_id], function (err) {
+          if (err) {
+            console.error("Error updating vendor balance:", err.message);
+          }
+        });
+
         res.status(201).json({ id: this.lastID });
       }
-    }
-  );
+    );
+  });
 });
 
 // Update a ledger entry
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { name, vendor_id, amountDebit, amountCredit, balance } = req.body;
+  const { name, purch_id, vendor_id, amountDebit, amountCredit } = req.body;
 
-  if (!name || !vendor_id || amountDebit === undefined || amountCredit === undefined || balance === undefined) {
+  if (!name || !vendor_id || (amountDebit === undefined && amountCredit === undefined) || !purch_id) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
   // Ensure name is one of the allowed values
-  const allowedNames = ["SRV", "CPV", "BPV", "GV"];
+  const allowedNames = ["SRV", "CPV", "BPV", "GV", "ER"];
   if (!allowedNames.includes(name)) {
     return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV." });
   }
 
-  db.run(
-    `UPDATE ledger SET 
-      name = ?, 
-      vendor_id = ?, 
-      amountDebit = ?, 
-      amountCredit = ?, 
-      balance = ? 
-     WHERE id = ?`,
-    [name, vendor_id, amountDebit, amountCredit, balance, id],
-    function (err) {
-      if (err) {
-        console.error(`Error updating ledger entry with ID ${id}:`, err.message);
-        res.status(500).json({ error: err.message });
-      } else if (this.changes === 0) {
-        res.status(404).json({ message: "Ledger entry not found" });
-      } else {
-        res.json({ message: "Ledger entry updated successfully." });
-      }
+  // Fetch vendor balance and proceed only after getting the result
+  db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [vendor_id], (err, row) => {
+    if (err) {
+      console.error("Error fetching vendor balance:", err.message);
+      return res.status(500).json({ error: err.message });
     }
-  );
+
+    let balance = row ? row.balance : 0; // Ensure balance is initialized correctly
+
+    // Update balance based on transaction type
+    let updatedName = name;
+    if (name === "SRV") {
+      balance -= amountDebit;
+    } else if (name === "ER") {
+      balance += amountDebit;
+      updatedName = "SRV";
+    } else {
+      balance += amountCredit;
+    }
+
+    // Update ledger **inside** the callback to ensure correct balance usage
+    db.run(
+      `UPDATE ledger SET name = ?, purch_id = ?, vendor_id = ?, amountDebit = ?, amountCredit = ?, balance = ? WHERE id = ?`,
+      [updatedName, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance, id],
+      function (err) {
+        if (err) {
+          console.error("Error updating ledger entry:", err.message);
+          return res.status(500).json({ error: err.message });
+        }
+
+        // Now update vendor balance
+        db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, vendor_id], function (err) {
+          if (err) {
+            console.error("Error updating vendor balance:", err.message);
+          }
+        });
+
+        res.json({ message: "Ledger entry updated successfully" });
+      }
+    );
+  },);
 });
 
 // Delete a ledger entry
