@@ -26,6 +26,7 @@ router.get("/", (req, res) => {
           hour12: true,
         }),
         balance: `PKR${vendor.balance.toFixed(2)}`,
+        balanceNumber: vendor.balance,
       }));
       res.json({ data: formattedData, totalData: formattedData.length });
     }
@@ -34,7 +35,7 @@ router.get("/", (req, res) => {
 
 // Get all vendors where category = vendor
 router.get("/category", (req, res) => {
-  db.all("SELECT * FROM vendors WHERE category = 'vendor' ORDER BY vendor_id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM vendors WHERE category = 'vendor' OR category = 'Vendor' ORDER BY vendor_id DESC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);
       res.status(500).json({ error: err.message });

@@ -195,6 +195,11 @@ const initDatabase = () => {
       notes TEXT
     );`,
 
+    `CREATE TABLE IF NOT EXISTS vouchers(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      symbol TEXT NOT NULL
+    )`
   ];
 
   queries.forEach((query) => {
