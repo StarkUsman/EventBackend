@@ -19,6 +19,9 @@ const purchaseRoutes = require("./APIs/purchase");
 const inventoryRoutes = require("./APIs/inventory");
 const ledgerRoutes = require("./APIs/ledger");
 const expensesRoutes = require("./APIs/expenses");
+const dashboardRoutes = require("./APIs/dashboard");
+const AcategoryRoutes = require("./APIs/Acategory");
+const AsubcategoryRoutes = require("./APIs/Asubcategory");
 
 // Define routes for all tables
 router.use("/halls", hallsRoutes);
@@ -38,5 +41,8 @@ router.use("/purchase", purchaseRoutes);
 router.use("/inventory", inventoryRoutes);
 router.use("/ledger", ledgerRoutes);
 router.use("/expenses", expensesRoutes);
+router.use("/dash", dashboardRoutes);
+router.use("/acategory", AcategoryRoutes);
+router.use("/asubcategory", AsubcategoryRoutes);
 
 module.exports = router;

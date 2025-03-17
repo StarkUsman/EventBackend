@@ -19,7 +19,8 @@ router.get("/", (req, res) => {
       reference_no: expense.reference_no,
       products: JSON.parse(expense.products), // Convert JSON string to object
       signature_text: expense.signature_text,
-      signature_img: expense.signature_img
+      signature_img: expense.signature_img,
+      notes: expense.notes
     }));
 
     res.json({ data: formattedData, totalData: formattedData.length });
@@ -50,7 +51,8 @@ router.post("/", (req, res) => {
     reference_no,
     products,
     signature_text,
-    signature_img
+    signature_img,
+    notes
   } = req.body;
 
   if (!purch_id || !total_amount || !purchase_date || !products) {
@@ -58,8 +60,8 @@ router.post("/", (req, res) => {
   }
 
   db.run(
-    `INSERT INTO expense (purch_id, total_amount, purchase_date, reference_no, products, signature_text, signature_img) 
-     VALUES (?, ?, ?, ?, ?, ?, ? )`,
+    `INSERT INTO expense (purch_id, total_amount, purchase_date, reference_no, products, signature_text, signature_img, notes) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ? )`,
     [
       purch_id,
       total_amount,
@@ -67,7 +69,8 @@ router.post("/", (req, res) => {
       reference_no || null,
       JSON.stringify(products), // Convert to JSON string
       signature_text || null,
-      signature_img || null
+      signature_img || null,
+      notes || null
     ],
     function (err) {
       if (err) {
@@ -81,7 +84,8 @@ router.post("/", (req, res) => {
         reference_no,
         products,
         signature_text,
-        signature_img
+        signature_img,
+        notes
       });
     }
   );
@@ -97,7 +101,8 @@ router.put("/:id", (req, res) => {
     reference_no,
     products,
     signature_text,
-    signature_img
+    signature_img,
+    notes
   } = req.body;
 
   if (!purch_id || !total_amount || !purchase_date || !products) {
@@ -106,7 +111,7 @@ router.put("/:id", (req, res) => {
 
   db.run(
     `UPDATE expense 
-     SET purch_id = ?, total_amount = ?, purchase_date = ?, reference_no = ?, products = ?, signature_text = ?, signature_img = ? 
+     SET purch_id = ?, total_amount = ?, purchase_date = ?, reference_no = ?, products = ?, signature_text = ?, signature_img = ?, notes = ? 
      WHERE id = ?`,
     [
       purch_id,
@@ -116,7 +121,8 @@ router.put("/:id", (req, res) => {
       JSON.stringify(products),
       signature_text,
       signature_img,
-      id
+      id,
+      notes
     ],
     function (err) {
       if (err) {

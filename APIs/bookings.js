@@ -38,38 +38,59 @@ router.post("/", (req, res) => {
     contact_number,
     alt_contact_number,
     booking_type,
-    description = null,
+    event_type,
+    description,
     slot_day,
     slot_type,
     slot_number,
     number_of_persons,
-    add_service_ids = null,
-    menu_id
+    menu_id,
+    menu_items_ids,
+    add_service_ids,
+    discount = 0,
+    advance = 0,
+    total_remaining = 0,
+    notes,
+    isDrafted = 0,
+    status = null
   } = req.body;
 
   // Ensure required fields are provided
-  if (!booking_type || !slot_day || !slot_type || slot_number === undefined || !number_of_persons || !menu_id) {
-    return res.status(400).json({ error: "All required fields (booking_type, slot_day, slot_type, etc.) must be provided." });
+  if (!booking_type || !event_type || !slot_day || !slot_type || slot_number === undefined || !number_of_persons || !menu_id) {
+    return res.status(400).json({ error: "All required fields (booking_type, event_type, slot_day, slot_type, slot_number, number_of_persons, menu_id, total_amount) must be provided." });
   }
+
+  const total_amount = req.body.total_remaining + req.body.advance;
 
   db.run(
     `INSERT INTO bookings 
-      (booking_name, contact_number, alt_contact_number, booking_type, description, date, slot_day, slot_type, slot_number, 
-       number_of_persons, add_service_ids, menu_id) 
-     VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)`,
+      (booking_name, contact_number, alt_contact_number, booking_type, event_type, description, date, slot_day, slot_type, slot_number, 
+       number_of_persons, menu_id, menu_items_ids, add_service_ids, discount, advance, total_remaining, total_amount, notes, isDrafted, status) 
+     VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+
     [
-      booking_name,
-      contact_number,
-      alt_contact_number,
+      booking_name || null,
+      contact_number || null,
+      alt_contact_number || null,
       booking_type,
-      description,
+      event_type,
+      description || null,
       slot_day,
       slot_type,
       slot_number,
       number_of_persons,
-      add_service_ids, // Can be NULL
-      menu_id
+      menu_id,
+      menu_items_ids || null,
+      add_service_ids || null,
+      discount,
+      advance,
+      total_remaining,
+      total_amount,
+      notes || null,
+      isDrafted || 0,
+      status || null
     ],
+
     function (err) {
       if (err) {
         console.error("Error creating booking:", err);

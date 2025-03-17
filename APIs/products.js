@@ -58,14 +58,14 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const { item, code, category, unit, quantity, sellingPrice, purchasePrice, img, description } = req.body;
 
-  if (!item || !unit || !sellingPrice || !purchasePrice) {
+  if (!item || !sellingPrice || !purchasePrice) {
     return res.status(400).json({ error: "Required fields are missing" });
   }
 
   db.run(
     `INSERT INTO product (item, code, category, unit, quantity, sellingPrice, purchasePrice, img, description) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [item, code, category, unit, quantity || 0, sellingPrice, purchasePrice, img || null, description || null],
+    [item, code, category, unit||null, quantity || 0, sellingPrice, purchasePrice, img || null, description || null],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });

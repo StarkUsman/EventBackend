@@ -85,15 +85,24 @@ const initDatabase = () => {
       booking_name TEXT,
       contact_number TEXT,
       alt_contact_number TEXT,
-      booking_type TEXT NOT NULL,
+      booking_type TEXT,
+      event_type TEXT NOT NULL,
       description TEXT,
-      date TEXT DEFAULT CURRENT_TIMESTAMP,
+      date TEXT,
       slot_day TEXT NOT NULL,
       slot_type TEXT NOT NULL,
       slot_number INTEGER NOT NULL,
       number_of_persons INTEGER NOT NULL,
+      menu_id INTEGER NOT NULL,
+      menu_items_ids TEXT,
       add_service_ids TEXT,
-      menu_id INTEGER NOT NULL
+      discount INTEGER,
+      advance INTEGER,
+      total_remaining INTEGER,
+      total_amount FLOAT NOT NULL,
+      notes TEXT,
+      isDrafted BOOLEAN DEFAULT 0,
+      status TEXT
     );`,
 
     `CREATE TABLE IF NOT EXISTS vendors (
@@ -101,8 +110,10 @@ const initDatabase = () => {
         name TEXT NOT NULL,
         email TEXT,
         phone TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        balance REAL DEFAULT 0
+        balance REAL DEFAULT 0,
+        category TEXT default null,
+        subcategory TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
       );`,
 
     `CREATE TABLE IF NOT EXISTS ledger (
@@ -129,13 +140,25 @@ const initDatabase = () => {
       img TEXT,
       total INTEGER NOT NULL DEFAULT 0
     );`,
+
+    `CREATE TABLE IF NOT EXISTS Acategory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category TEXT NOT NULL UNIQUE,
+      description TEXT
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS Asubcategory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      subcategory TEXT NOT NULL UNIQUE,
+      symbol TEXT
+    );`,
     
     `CREATE TABLE IF NOT EXISTS product (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       item TEXT NOT NULL,
       code TEXT,
       category TEXT NOT NULL,
-      unit TEXT NOT NULL,
+      unit TEXT,
       quantity INTEGER,
       sellingPrice REAL NOT NULL,
       purchasePrice REAL NOT NULL,
@@ -156,7 +179,8 @@ const initDatabase = () => {
       invoice_sr_no TEXT,
       products JSON NOT NULL,
       signature_text TEXT,
-      signature_img TEXT
+      signature_img TEXT,
+      notes TEXT
     );`,
 
     `CREATE TABLE IF NOT EXISTS expense (
@@ -167,7 +191,8 @@ const initDatabase = () => {
       reference_no TEXT,
       products JSON NOT NULL,
       signature_text TEXT,
-      signature_img TEXT
+      signature_img TEXT,
+      notes TEXT
     );`,
 
   ];

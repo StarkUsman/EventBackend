@@ -2,17 +2,58 @@ const express = require("express");
 const db = require("../models/database");
 const router = express.Router();
 
-// Get all menu items
+// Get all menu items (RAW)
 router.get("/", (req, res) => {
   db.all("SELECT * FROM menuItems", [], (err, rows) => {
     if (err) {
-      console.error("Error fetching menu items:", err.message);
-      res.status(500).json({ error: err.message });
-    } else {
-      console.log("Fetched menu items successfully.");
-      res.json(rows);
+      console.error("[GET /menu-items] Error fetching menu items:", err.message);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
+    console.log("[GET /menu-items] Fetched menu items successfully.");
+    res.json(rows);
   });
+});
+
+// Get all menu items (FORMATTED)
+router.get("/formatted", (req, res) => {
+  db.all(
+    `SELECT 
+      menu_item_id, 
+      item_name, 
+      item_name_urdu, 
+      description, 
+      price, 
+      category, 
+      createdAt, 
+      updatedAt 
+    FROM menuItems ORDER BY menu_item_id DESC`, 
+    [], 
+    (err, rows) => {
+      if (err) {
+        console.error("[GET /menu-items/formatted] Error fetching menu items:", err.message);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      console.log("[GET /menu-items/formatted] Fetched formatted menu items successfully.");
+
+      const formattedRows = rows.map((row, index) => ({
+        sNo: index + 1, // Serial number
+        menu_item_id: row.menu_item_id,
+        item_name: row.item_name,
+        item_name_urdu: row.item_name_urdu,
+        description: row.description,
+        price: row.price,
+        category: row.category,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt
+      }));
+
+      res.json({
+        data: formattedRows,   
+        totalData: rows.length 
+      });
+    }
+  );
 });
 
 // Get a specific menu item

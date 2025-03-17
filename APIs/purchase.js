@@ -24,7 +24,8 @@ router.get("/", (req, res) => {
       invoice_sr_no: purchase.invoice_sr_no,
       products: JSON.parse(purchase.products), // Convert JSON string to object
       signature_text: purchase.signature_text,
-      signature_img: purchase.signature_img
+      signature_img: purchase.signature_img,
+      notes: purchase.notes
     }));
 
     res.json({ data: formattedData, totalData: formattedData.length });
@@ -61,7 +62,8 @@ router.post("/", (req, res) => {
     invoice_sr_no,
     products,
     signature_text,
-    signature_img
+    signature_img,
+    notes
   } = req.body;
 
   if (!purch_id || !vendor || !total_amount || !paymentmode || !purchase_date || !due_date || !status || !products) {
@@ -69,8 +71,8 @@ router.post("/", (req, res) => {
   }
 
   db.run(
-    `INSERT INTO purchase (purch_id, vendor, total_amount, paymentmode, purchase_date, due_date, status, reference_no, invoice_sr_no, products, signature_text, signature_img) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO purchase (purch_id, vendor, total_amount, paymentmode, purchase_date, due_date, status, reference_no, invoice_sr_no, products, signature_text, signature_img, notes) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`,
     [
       purch_id,
       JSON.stringify(vendor), // Convert to JSON string
@@ -83,7 +85,8 @@ router.post("/", (req, res) => {
       invoice_sr_no || null,
       JSON.stringify(products), // Convert to JSON string
       signature_text || null,
-      signature_img || null
+      signature_img || null,
+      notes || null
     ],
     function (err) {
       if (err) {
@@ -102,7 +105,8 @@ router.post("/", (req, res) => {
         invoice_sr_no,
         products,
         signature_text,
-        signature_img
+        signature_img,
+        notes
       });
     }
   );
@@ -123,7 +127,8 @@ router.put("/:id", (req, res) => {
     invoice_sr_no,
     products,
     signature_text,
-    signature_img
+    signature_img,
+    notes
   } = req.body;
 
   if (!purch_id || !vendor || !total_amount || !paymentmode || !purchase_date || !due_date || !status || !products) {
@@ -132,7 +137,7 @@ router.put("/:id", (req, res) => {
 
   db.run(
     `UPDATE purchase 
-     SET purch_id = ?, vendor = ?, total_amount = ?, paymentmode = ?, purchase_date = ?, due_date = ?, status = ?, reference_no = ?, invoice_sr_no = ?, products = ?, signature_text = ?, signature_img = ? 
+     SET purch_id = ?, vendor = ?, total_amount = ?, paymentmode = ?, purchase_date = ?, due_date = ?, status = ?, reference_no = ?, invoice_sr_no = ?, products = ?, signature_text = ?, signature_img = ?, notes = ? 
      WHERE id = ?`,
     [
       purch_id,
@@ -147,6 +152,7 @@ router.put("/:id", (req, res) => {
       JSON.stringify(products),
       signature_text,
       signature_img,
+      notes,
       id
     ],
     function (err) {

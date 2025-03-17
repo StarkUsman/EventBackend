@@ -26,18 +26,25 @@ const stringToArray = (string) => {
 // Get all menus
 router.get("/", async (req, res) => {
   try {
-    db.all("SELECT * FROM menus order by menu_id desc", (err, rows) => {
+    db.all("SELECT * FROM menus ORDER BY menu_id DESC", (err, rows) => {
       if (err) {
         logError("Error fetching menus:", err.message);
-        res.status(500).json({ error: err.message });
-      } else {
-        // Convert menu_item_ids string back to array before sending response
-        rows.forEach(row => {
-          row.menu_item_ids = stringToArray(row.menu_item_ids);
-        });
-        logSuccess("Fetched menus successfully.");
-        res.json(rows);
+        return res.status(500).json({ error: err.message });
       }
+
+      const formattedData = rows.map((menu, index) => ({
+        sNo: index + 1,
+        menu_id: menu.menu_id,
+        menu_name: menu.menu_name,
+        menu_name_urdu: menu.menu_name_urdu,
+        menu_item_ids: stringToArray(menu.menu_item_ids),
+        description: menu.description,
+        isActive: menu.isActive === 1,
+        menu_price: menu.menu_price
+      }));
+
+      logSuccess("Fetched menus successfully.");
+      res.json({ data: formattedData, totalData: formattedData.length });
     });
   } catch (err) {
     logError("Unexpected error fetching menus:", err);
