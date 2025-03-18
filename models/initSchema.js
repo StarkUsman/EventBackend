@@ -89,20 +89,21 @@ const initDatabase = () => {
       event_type TEXT NOT NULL,
       description TEXT,
       date TEXT,
-      slot_day TEXT NOT NULL,
-      slot_type TEXT NOT NULL,
-      slot_number INTEGER NOT NULL,
-      number_of_persons INTEGER NOT NULL,
-      menu_id INTEGER NOT NULL,
+      slot_day TEXT,
+      slot_type TEXT,
+      slot_number INTEGER,
+      number_of_persons INTEGER,
+      menu_id INTEGER,
       menu_items_ids TEXT,
       add_service_ids TEXT,
       discount INTEGER,
       advance INTEGER,
       total_remaining INTEGER,
-      total_amount FLOAT NOT NULL,
+      total_amount FLOAT,
       notes TEXT,
       isDrafted BOOLEAN DEFAULT 0,
-      status TEXT
+      status TEXT,
+      SLOT JSON
     );`,
 
     `CREATE TABLE IF NOT EXISTS vendors (
