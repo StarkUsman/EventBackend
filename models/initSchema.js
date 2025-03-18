@@ -139,7 +139,8 @@ const initDatabase = () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       category TEXT NOT NULL UNIQUE,
       img TEXT,
-      total INTEGER NOT NULL DEFAULT 0
+      description TEXT,
+      shortName TEXT
     );`,
 
     `CREATE TABLE IF NOT EXISTS Acategory (
@@ -161,7 +162,6 @@ const initDatabase = () => {
       category TEXT NOT NULL,
       unit TEXT,
       quantity INTEGER,
-      sellingPrice REAL NOT NULL,
       purchasePrice REAL NOT NULL,
       img TEXT,
       description TEXT

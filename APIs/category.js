@@ -15,7 +15,8 @@ router.get("/", (req, res) => {
       id: category.id,
       category: category.category,
       img: category.img,
-      total: category.total,
+      description: category.description,
+      shortName: category.shortName,
     }));
 
     res.json({ data: formattedData, totalData: formattedData.length });
@@ -38,7 +39,7 @@ router.get("/:id", (req, res) => {
 
 // 🚀 Create a new category
 router.post("/", (req, res) => {
-  const { category, img, total } = req.body;
+  const { category, img, description, shortName } = req.body;
 
   if (!category) {
     return res.status(400).json({ error: "Category is required" });
@@ -47,13 +48,13 @@ router.post("/", (req, res) => {
   const imageN = img ? img : "assets/img/category/category-04.jpg";
 
   db.run(
-    `INSERT INTO category (category, img, total) VALUES (?, ?, ?)`,
-    [category, imageN, total || 0],
+    `INSERT INTO category (category, img, description, shortName) VALUES (?, ?, ?, ?)`,
+    [category, imageN, description || null, shortName || null],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.status(201).json({ id: this.lastID, category, img, total: total || "0" });
+      res.status(201).json({ id: this.lastID, category, img, description, shortName });
     }
   );
 });
@@ -61,15 +62,15 @@ router.post("/", (req, res) => {
 // 🚀 Update a category
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { category, img, total } = req.body;
+  const { category, img, description, shortName } = req.body;
 
-  if (!category || !img) {
-    return res.status(400).json({ error: "Category and image fields are required" });
+  if (!category) {
+    return res.status(400).json({ error: "Category field required" });
   }
 
   db.run(
-    `UPDATE category SET category = ?, img = ?, total = ? WHERE id = ?`,
-    [category, img, total, id],
+    `UPDATE category SET category = ?, img = ?, description = ?, shortName = ? WHERE id = ?`,
+    [category, img, description, shortName, id],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });

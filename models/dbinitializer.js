@@ -339,56 +339,47 @@ bookings.forEach(booking => {
     {
       "category": "Advertising",
       "img": "assets/img/category/category-01.jpg",
-      "total": 60
     },
     {
       "category": "Food",
       "img": "assets/img/category/category-02.jpg",
-      "total": 55
     },
     {
       "category": "Marketing",
       "img": "assets/img/category/category-03.jpg",
-      "total":  70
     },
    
     {
       "category": "Repairs",
       "img": "assets/img/category/category-04.jpg",
-      "total":  82
     },
     {
       "category": "Software",
       "img": "assets/img/category/category-05.jpg",
-      "total": 26
     },
    
     {
       "category": "Stationary",
       "img": "assets/img/category/category-06.jpg",
-      "total": 60
     },
     {
       "category": "Advertising",
       "img": "assets/img/category/category-01.jpg",
-      "total": 60
     },
     {
       "category": "Food",
       "img": "assets/img/category/category-02.jpg",
-      "total": 55
     },
     {
       "category": "Marketing",
       "img": "assets/img/category/category-03.jpg",
-      "total":  70
     }
   ];
 
   categories.forEach(category => {
     db.run(
-      `INSERT INTO category (category, img, total) VALUES (?, ?, ?)`,
-      [category.category, category.img, category.total],
+      `INSERT INTO category (category, img) VALUES (?, ?)`,
+      [category.category, category.img],
       function (err) {
         if (err) {
           console.error("Error inserting categoty:", err.message);
@@ -406,7 +397,6 @@ bookings.forEach(booking => {
       "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "253.00",
     "purchasePrice": "248.00",
     "img": "assets/img/sales-return1.svg"
   },
@@ -416,7 +406,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "4",
-    "sellingPrice": "360.00",
     "purchasePrice": "350.00",
     "img": "assets/img/sales-return2.svg"
   },
@@ -426,7 +415,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "7",
-    "sellingPrice": "724.00",
     "purchasePrice": "700.00",
     "img": "assets/img/sales-return3.svg"
   },
@@ -436,7 +424,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "3",
-    "sellingPrice": "210.00",
     "purchasePrice": "200.00",
     "img": "assets/img/sales-return4.svg"
   },
@@ -446,7 +433,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "1",
-    "sellingPrice": "155.00",
     "purchasePrice": "150.00",
     "img": "assets/img/sales-return5.svg"
   },
@@ -456,7 +442,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "253.00",
     "purchasePrice": "248.00",
     "img": "assets/img/sales-return6.svg"
   },
@@ -466,7 +451,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "253.00",
     "purchasePrice": "248.00",
     "img": "assets/img/sales-return7.svg"
   },
@@ -476,7 +460,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "253.00",
     "purchasePrice": "248.00",
     "img": "assets/img/sales-return8.svg"
   },
@@ -486,7 +469,6 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "253.00",
     "purchasePrice": "248.00",
     "img": "assets/img/sales-return9.svg"
   },
@@ -496,15 +478,14 @@ bookings.forEach(booking => {
     "category": "3",
     "units": "1",
     "quantity": "2",
-    "sellingPrice": "253.00",
     "purchasePrice": "248.00",
     "img": "assets/img/sales-return10.svg"
   }];
 
   products.forEach(product => {
     db.run(
-      `INSERT INTO product (item, code, category, unit, quantity, sellingPrice, purchasePrice, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [product.item, product.code, product.category, product.units, product.quantity, product.purchasePrice, product.sellingPrice, product.img],
+      `INSERT INTO product (item, code, category, unit, quantity, purchasePrice, img) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [product.item, product.code, product.category, product.units, product.quantity, product.purchasePrice, product.img],
       function (err) {
         if (err) {
           console.error("Error inserting product:", err.message);

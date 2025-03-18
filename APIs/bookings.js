@@ -10,7 +10,11 @@ router.get("/", (req, res) => {
       res.status(500).json({ error: err.message });
     } else {
       console.log("Fetched bookings successfully.");
-      res.json(rows);
+      const formattedResponse = rows.map((row) => ({
+        ...row,
+        SLOT: JSON.parse(row.SLOT)
+      }));
+      res.json(formattedResponse);
     }
   });
 });
@@ -90,7 +94,7 @@ router.post("/", (req, res) => {
       notes || null,
       isDrafted || 0,
       status || null,
-      SLOT
+      JSON.stringify(SLOT)
     ],
 
     function (err) {
