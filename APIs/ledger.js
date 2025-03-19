@@ -117,12 +117,12 @@ router.get("/:vendor_id", (req, res) => {
 // Create a new ledger entry
 router.post("/", (req, res) => {
   const { name, purch_id, vendor_id, amountDebit, amountCredit } = req.body;
-  if (!name || !vendor_id || (amountDebit === undefined && amountCredit === undefined) || !purch_id) {
+  if (!name || !vendor_id || (amountDebit === undefined && amountCredit === undefined)) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
   // Ensure name is one of the allowed values
-  const allowedNames = ["SRV", "CPV", "BPV", "GV"];
+  const allowedNames = ["SRV", "CPV", "BPV", "GV", "OB"];
   if (!allowedNames.includes(name)) {
     return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV." });
   }
@@ -134,10 +134,11 @@ router.post("/", (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    let balance = row ? row.balance : 0; // Ensure balance is initialized correctly
+    let balance = row ? row.balance : 0;
 
-    // Update balance based on transaction type
-    if (name === "SRV") {
+    if (name === "OB") {
+      balance = amountCredit != 0 ? amountCredit : -amountDebit;
+    } else if (name === "SRV") {
       balance -= amountDebit;
     } else {
       balance += amountCredit;

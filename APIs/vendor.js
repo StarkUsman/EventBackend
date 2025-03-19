@@ -25,7 +25,7 @@ router.get("/", (req, res) => {
           minute: "2-digit",
           hour12: true,
         }),
-        balance: `PKR${vendor.balance.toFixed(2)}`,
+        balance: vendor.balance.toFixed(2),
         balanceNumber: vendor.balance,
       }));
       res.json({ data: formattedData, totalData: formattedData.length });
@@ -56,7 +56,7 @@ router.get("/category", (req, res) => {
           minute: "2-digit",
           hour12: true,
         }),
-        balance: `PKR${vendor.balance.toFixed(2)}`,
+        balance: vendor.balance.toFixed(2),
       }));
       res.json({ data: formattedData, totalData: formattedData.length });
     }

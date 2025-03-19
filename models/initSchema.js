@@ -103,7 +103,8 @@ const initDatabase = () => {
       notes TEXT,
       isDrafted BOOLEAN DEFAULT 0,
       status TEXT,
-      SLOT JSON
+      SLOT JSON,
+      dashboardDate TEXT
     );`,
 
     `CREATE TABLE IF NOT EXISTS vendors (
@@ -119,8 +120,8 @@ const initDatabase = () => {
 
     `CREATE TABLE IF NOT EXISTS ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL CHECK(name IN ('SRV', 'CPV', 'BPV', 'GV', 'ER')),
-      purch_id INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      purch_id INTEGER,
       vendor_id INTEGER NOT NULL,
       amountDebit REAL NOT NULL,
       amountCredit REAL NOT NULL,

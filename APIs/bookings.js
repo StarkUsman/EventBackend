@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../models/database");
 const router = express.Router();
+const convertDate = require("../utils/dateConverter");
 
 // Get all bookings
 router.get("/", (req, res) => {
@@ -17,6 +18,42 @@ router.get("/", (req, res) => {
       res.json(formattedResponse);
     }
   });
+});
+
+router.get("/upcoming", (req, res) => {
+  let todayDate = new Date();
+  let formattedDate = todayDate.toISOString().split('T')[0];
+  db.all(
+    "SELECT * FROM bookings WHERE dashboardDate >= ? ORDER BY dashboardDate ASC",
+    [formattedDate],
+    (err, rows) => {
+      if (err) {
+        console.error("Error fetching upcoming bookings:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      const safeParseJSON = (data) => {
+        try {
+          return typeof data === "string" ? JSON.parse(data) : data;
+        } catch (e) {
+          console.error("Error parsing SLOT field:", e.message);
+          return data;
+        }
+      };
+
+      // Format the response
+      const formattedResponse = rows.map((row, index) => ({
+        sNo: index + 1, // Serial number
+        ...row,
+        SLOT: safeParseJSON(row.SLOT)
+      }));
+
+      res.json({
+        totalDocs: formattedResponse.length,
+        data: formattedResponse
+      });
+    }
+  );
 });
 
 // Get a specific booking
@@ -66,12 +103,13 @@ router.post("/", (req, res) => {
   // }
 
   const total_amount = req.body.total_remaining + req.body.advance;
+  const dashboardDate = convertDate(SLOT.date);
 
   db.run(
     `INSERT INTO bookings 
       (booking_name, contact_number, alt_contact_number, booking_type, event_type, description, date, slot_day, slot_type, slot_number, 
-       number_of_persons, menu_id, menu_items_ids, add_service_ids, discount, advance, total_remaining, total_amount, notes, isDrafted, status, SLOT) 
-     VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       number_of_persons, menu_id, menu_items_ids, add_service_ids, discount, advance, total_remaining, total_amount, notes, isDrafted, status, SLOT, dashboardDate) 
+     VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
     [
       booking_name || null,
@@ -94,7 +132,8 @@ router.post("/", (req, res) => {
       notes || null,
       isDrafted || 0,
       status || null,
-      JSON.stringify(SLOT)
+      JSON.stringify(SLOT),
+      dashboardDate
     ],
 
     function (err) {
