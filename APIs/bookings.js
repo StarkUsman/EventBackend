@@ -103,7 +103,7 @@ router.post("/", (req, res) => {
   // }
 
   const total_amount = req.body.total_remaining + req.body.advance;
-  const dashboardDate = convertDate(SLOT.date);
+  const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
 
   db.run(
     `INSERT INTO bookings 
@@ -111,7 +111,7 @@ router.post("/", (req, res) => {
        number_of_persons, menu_id, menu_items_ids, add_service_ids, discount, advance, total_remaining, total_amount, notes, isDrafted, status, SLOT, dashboardDate) 
      VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
-    [
+    [ 
       booking_name || null,
       contact_number || null,
       alt_contact_number || null,

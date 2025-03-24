@@ -185,6 +185,23 @@ const initDatabase = () => {
       notes TEXT
     );`,
 
+    `CREATE TABLE IF NOT EXISTS purchaseReturn (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      purch_id INTEGER NOT NULL,
+      vendor JSON NOT NULL,
+      total_amount REAL NOT NULL,
+      paymentmode TEXT NOT NULL,
+      purchase_date TEXT NOT NULL,
+      due_date TEXT NOT NULL,
+      status TEXT NOT NULL,
+      reference_no TEXT,
+      invoice_sr_no TEXT,
+      products JSON NOT NULL,
+      signature_text TEXT,
+      signature_img TEXT,
+      notes TEXT
+    );`,
+
     `CREATE TABLE IF NOT EXISTS expense (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       purch_id INTEGER NOT NULL,
@@ -197,11 +214,24 @@ const initDatabase = () => {
       notes TEXT
     );`,
 
-    `CREATE TABLE IF NOT EXISTS vouchers(
+    `CREATE TABLE IF NOT EXISTS vouchers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL UNIQUE,
       symbol TEXT NOT NULL
+    )`,
+
+    `CREATE TABLE IF NOT EXISTS transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trans_id INTEGER UNIQUE NOT NULL,
+      date TEXT NOT NULL,
+      amount REAL NOT NULL,
+      creditAccount JSON NOT NULL,
+      debitAccount JSON NOT NULL,
+      notes TEXT,
+      voucher TEXT NOT NULL,
+      checkNumber TEXT
     )`
+
   ];
 
   queries.forEach((query) => {

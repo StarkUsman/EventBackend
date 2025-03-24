@@ -106,6 +106,8 @@ router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { name, email, phone, balance, category, subcategory } = req.body;
 
+  const venor = db.get("SELECT * FROM vendors WHERE vendor_id = ?", [id]);
+  console.log("vendorbeforeUpdate: ", venor);
   db.run(
     `UPDATE vendors SET 
       name = ?, 
@@ -123,6 +125,7 @@ router.put("/:id", (req, res) => {
       } else if (this.changes === 0) {
         res.status(404).json({ message: "Vendor not found" });
       } else {
+        console.log("vendorAfterUpdate: ", db.get("SELECT * FROM vendors WHERE vendor_id = ?", [id]));
         res.json({ message: "Vendor updated successfully." });
       }
     }

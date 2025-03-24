@@ -11,7 +11,6 @@ router.get("/", (req, res) => {
       p.id, p.item, p.code, 
       u.unit_name AS units, 
       p.quantity, 
-      p.sellingPrice AS sales, 
       p.purchasePrice AS purchase
     FROM product p
     LEFT JOIN units u ON p.unit = u.unit_id
@@ -31,8 +30,7 @@ router.get("/", (req, res) => {
         code: row.code,
         units: row.units || "Unknown",
         quantity: row.quantity.toString(),
-        sales: `$${parseFloat((row.sales || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
-        purchase: `$${parseFloat((row.purchase || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
+        purchase: row.purchase.toFixed(2),
       })),
       totalData: rows.length,
     };
@@ -51,7 +49,6 @@ router.get("/:id", (req, res) => {
       id, item, code, 
       unit, 
       quantity, 
-      sellingPrice AS sales, 
       purchasePrice AS purchase
     FROM product
     WHERE id = ?
@@ -71,8 +68,7 @@ router.get("/:id", (req, res) => {
       code: row.code,
       units: row.unit, // Returns unit_id instead of unit_name
       quantity: row.quantity.toString(),
-      sales: `$${parseFloat((row.sales || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
-      purchase: `$${parseFloat((row.purchase || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
+      purchase: row.purchase.toFixed(2),
     };
 
     res.json(formattedItem);
@@ -83,21 +79,20 @@ router.get("/:id", (req, res) => {
  * 🔹 Add New Inventory Item (Parses Prices to Number)
  */
 router.post("/", (req, res) => {
-  const { item, code, quantity, sales, purchase } = req.body;
+  const { item, code, quantity, purchase } = req.body;
 
-  if (!item || !code || !quantity || !sales || !purchase) {
+  if (!item || !code || !quantity || !purchase) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const parsedSales = parseFloat(sales.toString().replace(/[^0-9.]/g, "")) || 0;
   const parsedPurchase = parseFloat(purchase.toString().replace(/[^0-9.]/g, "")) || 0;
 
   const query = `
-    INSERT INTO product (item, code, quantity, sellingPrice, purchasePrice) 
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO product (item, code, quantity, purchasePrice) 
+    VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.run(query, [item, code, quantity, parsedSales, parsedPurchase], function (err) {
+  db.run(query, [item, code, quantity, parsedPurchase], function (err) {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -111,22 +106,21 @@ router.post("/", (req, res) => {
  */
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { item, code, quantity, sales, purchase } = req.body;
+  const { item, code, quantity, purchase } = req.body;
 
-  if (!item || !code || !quantity || !sales || !purchase) {
+  if (!item || !code || !quantity || !purchase) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const parsedSales = parseFloat(sales.toString().replace(/[^0-9.]/g, "")) || 0;
   const parsedPurchase = parseFloat(purchase.toString().replace(/[^0-9.]/g, "")) || 0;
 
   const query = `
     UPDATE product 
-    SET item = ?, code = ?, quantity = ?, sellingPrice = ?, purchasePrice = ?
+    SET item = ?, code = ?, quantity = ?, purchasePrice = ?
     WHERE id = ?
   `;
 
-  db.run(query, [item, code, quantity, parsedSales, parsedPurchase, id], function (err) {
+  db.run(query, [item, code, quantity, parsedPurchase, id], function (err) {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

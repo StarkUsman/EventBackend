@@ -122,9 +122,9 @@ router.post("/", (req, res) => {
   }
 
   // Ensure name is one of the allowed values
-  const allowedNames = ["SRV", "CPV", "BPV", "GV", "OB"];
+  const allowedNames = ["SRV", "CPV", "BPV", "GV", "OB", "PRV"];
   if (!allowedNames.includes(name)) {
-    return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV." });
+    return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV, PRV" });
   }
 
   // Fetch vendor balance and proceed only after getting the result
