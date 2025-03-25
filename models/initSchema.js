@@ -161,6 +161,7 @@ const initDatabase = () => {
       item TEXT NOT NULL,
       code TEXT,
       category TEXT NOT NULL,
+      alertQuantity INTEGER,
       unit TEXT,
       quantity INTEGER,
       purchasePrice REAL NOT NULL,

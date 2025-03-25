@@ -20,6 +20,35 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/formatted", (req, res) => {
+  db.all("SELECT * FROM bookings ORDER BY booking_id DESC", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching vendors:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      const safeParseJSON = (data) => {
+        try {
+          return typeof data === "string" ? JSON.parse(data) : data;
+        } catch (e) {
+          console.error("Error parsing SLOT field:", e.message);
+          return data;
+        }
+      };
+
+      const formattedResponse = rows.map((row, index) => ({
+        sNo: index + 1,
+        ...row,
+        SLOT: safeParseJSON(row.SLOT)
+      }));
+
+      res.json({
+        totalDocs: formattedResponse.length,
+        data: formattedResponse
+      });
+    }
+  });
+});
+
 router.get("/upcoming", (req, res) => {
   let todayDate = new Date();
   let formattedDate = todayDate.toISOString().split('T')[0];
@@ -56,6 +85,15 @@ router.get("/upcoming", (req, res) => {
   );
 });
 
+const safeParseJSON = (data) => {
+  try {
+    return typeof data === "string" ? JSON.parse(data) : data;
+  } catch (e) {
+    console.error("Error parsing SLOT field:", e.message);
+    return data;
+  }
+};
+
 // Get a specific booking
 router.get("/:id", (req, res) => {
   const { id } = req.params;
@@ -65,7 +103,12 @@ router.get("/:id", (req, res) => {
       res.status(500).json({ error: err.message });
     } else if (row) {
       console.log(`Fetched booking with ID ${id} successfully.`);
-      res.json(row);
+      // res.json(row);
+      const formattedResponse = {
+        ...row,
+        SLOT: safeParseJSON(row.SLOT) // Ensure SLOT is properly parsed
+      };
+      res.json(formattedResponse);
     } else {
       res.status(404).json({ message: "Booking not found" });
     }

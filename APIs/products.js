@@ -27,6 +27,7 @@ router.get("/", (req, res) => {
       id: product.id,
       item: product.item,
       code: product.code,
+      alertQuantity: product.alertQuantity,
       category: product.category_name, // Using category_name from categories table
       unit: product.unit_name, // Using unit_name from units table
       quantity: product.quantity,
@@ -55,21 +56,21 @@ router.get("/:id", (req, res) => {
 
 // 🚀 Create a new product
 router.post("/", (req, res) => {
-  const { item, code, category, unit, quantity, purchasePrice, img, description } = req.body;
+  const { item, code, category, unit, alertQuantity, quantity, purchasePrice, img, description } = req.body;
 
   if (!item || !purchasePrice) {
     return res.status(400).json({ error: "Required fields are missing" });
   }
 
   db.run(
-    `INSERT INTO product (item, code, category, unit, quantity, purchasePrice, img, description) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [item, code, category, unit||null, quantity || 0, purchasePrice, img || null, description || null],
+    `INSERT INTO product (item, code, category, alertQuantity, unit, quantity, purchasePrice, img, description) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [item, code, category, alertQuantity || null, unit||null, quantity || 0, purchasePrice, img || null, description || null],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.status(201).json({ id: this.lastID, item, code, category, unit, quantity, purchasePrice, img, description });
+      res.status(201).json({ id: this.lastID, item, code, category, alertQuantity, unit, quantity, purchasePrice, img, description });
     }
   );
 });
@@ -77,15 +78,15 @@ router.post("/", (req, res) => {
 // 🚀 Update a product
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { item, code, category, unit, purchasePrice, quantity, img, description } = req.body;
+  const { item, code, category, alertQuantity, unit, purchasePrice, quantity, img, description } = req.body;
 
   if (!item || !unit || !purchasePrice) {
     return res.status(400).json({ error: "Required fields are missing" });
   }
 
   db.run(
-    `UPDATE product SET item = ?, code = ?, category = ?, unit = ?, quantity = ?, purchasePrice = ?, img = ?, description = ? WHERE id = ?`,
-    [item, code, category, unit, quantity || 0, purchasePrice, img, description, id],
+    `UPDATE product SET item = ?, code = ?, category = ?, alertQuantity = ?, unit = ?, quantity = ?, purchasePrice = ?, img = ?, description = ? WHERE id = ?`,
+    [item, code, category, alertQuantity, unit, quantity || 0, purchasePrice, img, description, id],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
