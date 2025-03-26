@@ -76,7 +76,7 @@ router.post("/", (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.status(201).json({
+      let response = {
         id: this.lastID,
         purch_id,
         total_amount,
@@ -86,9 +86,47 @@ router.post("/", (req, res) => {
         signature_text,
         signature_img,
         notes
+      };
+      
+      db.get("SELECT * FROM vendors WHERE name = ?", ["FOOD EXPENSE"], (err, row) => {
+        if (err) {
+          console.error("Error fetching vendor balance:", err.message);
+          return res.status(500).json({ error: err.message });
+        }
+        if(!row) {
+          console.error("Vendor not found");
+        }        
+        let balance = row ? row.balance : 0;
+        let vendor_id = row.vendor_id;
+        balance = balance + total_amount;
+        let ledgerName = "EXV";
+        let amountCredit = total_amount;
+        let amountDebit = 0;
+        
+        db.run(
+          `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
+          VALUES (?, ?, ?, ?, ?, ?)`,
+          [ledgerName, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance],
+          function (err) {
+            if (err) {
+              console.error("Error creating ledger entry:", err.message);
+              return res.status(500).json({ error: err.message });
+            }
+
+            // Now update vendor balance
+            db.run("UPDATE vendors SET balance = ? WHERE name = 'FOOD EXPENSE'", [balance], function (err) {
+              if (err) {
+                console.error("Error updating vendor balance:", err.message);
+              }
+            });
+            
+            res.status(201).json({ response });
+          }
+        );
       });
     }
   );
+
 });
 
 // 🚀 Update an expense

@@ -1,0 +1,53 @@
+{
+    "reservation_name": "Fraaz",
+    "contact_number": "87654",
+    "alt_contact_number": "1234",
+    "booking_type": "Birthday Party",
+    "description": "Descrption",
+    "date": "2025-03-26T17:46:53.159Z",
+    "num_of_persons": 1,
+    "additional_services": [
+        {
+            "additional_service_id": 1,
+            "additional_service_name": "Audio System",
+            "additional_service_name_urdu": "آڈیو سسٹم",
+            "description": "High quality sound system.",
+            "price": 500,
+            "isEditable": 1,
+            "category": "Equipment",
+            "createdAt": "2025-03-26 07:22:08",
+            "updatedAt": "2025-03-26 07:22:08",
+            "selected": true,
+            "quantity": 1,
+            "totalPrice": 500
+        }
+    ],
+    "selectedMenu": {
+        "sNo": 1,
+        "menu_id": 3,
+        "menu_name": "Birthday Party Menu",
+        "menu_name_urdu": "سالگرہ پارٹی مینو",
+        "menu_item_ids": ["1", "2", "3"],
+        "description": "Fun birthday party menu.",
+        "isActive": true,
+        "menu_price": 300,
+        "price": 3000,
+        "finalPrice": 3000
+    },
+    "booker_type": "Bride",
+    "status": null,
+    "additionalPrice": 500,
+    "discount": 500,
+    "notes": "Note",
+    "add_service_ids": [1],
+    "menu_items_ids": [1, 2],
+    "total_menu_price": 3000,
+    "grandTotal": 3500,
+    "total_price": 3000,
+    "totalAdditionalPrice": 500,
+    "SLOT": {
+        "hall": "Normal",
+        "date": "27_Mar_2025",
+        "slot": "Evening"
+    }
+}

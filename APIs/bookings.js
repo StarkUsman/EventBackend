@@ -13,6 +13,8 @@ router.get("/", (req, res) => {
       console.log("Fetched bookings successfully.");
       const formattedResponse = rows.map((row) => ({
         ...row,
+        additional_services: JSON.parse(row.additional_services),
+        selectedMenu: JSON.parse(row.selectedMenu),
         SLOT: JSON.parse(row.SLOT)
       }));
       res.json(formattedResponse);
@@ -118,59 +120,65 @@ router.get("/:id", (req, res) => {
 // Create a new booking
 router.post("/", (req, res) => {
   const {
-    booking_name,
+    reservation_name,
     contact_number,
     alt_contact_number,
     booking_type,
-    event_type,
     description,
-    slot_day,
-    slot_type,
-    slot_number,
-    number_of_persons,
-    menu_id,
-    menu_items_ids,
-    add_service_ids,
+    date,
+    num_of_persons,
+    additional_services,
+    selectedMenu,
+    booker_type,
+    status = null,
+    additionalPrice = 0,
     discount = 0,
+    notes,
+    add_service_ids,
+    menu_items_ids,
+    total_menu_price,
+    grandTotal,
+    total_price,
+    SLOT,
     advance = 0,
     total_remaining = 0,
-    notes,
-    isDrafted = 0,
-    status = null,
-    SLOT
+    payment_received = 0
   } = req.body;
 
-  const total_amount = req.body.total_remaining + req.body.advance;
   const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
 
   db.run(
     `INSERT INTO bookings 
-      (booking_name, contact_number, alt_contact_number, booking_type, event_type, description, date, slot_day, slot_type, slot_number, 
-       number_of_persons, menu_id, menu_items_ids, add_service_ids, discount, advance, total_remaining, total_amount, notes, isDrafted, status, SLOT, dashboardDate) 
-     VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-
-    [ 
-      booking_name || null,
+      (reservation_name, contact_number, alt_contact_number, booking_type, description, date, number_of_persons, 
+       additional_services, selectedMenu, booker_type, status, additionalPrice, discount, notes, add_service_ids, 
+       menu_items_ids, total_menu_price, grandTotal, total_price, SLOT, advance, total_remaining, 
+       payment_received, dashboardDate) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    
+    [
+      reservation_name || null,
       contact_number || null,
       alt_contact_number || null,
-      booking_type,
-      event_type,
+      booking_type || null,
       description || null,
-      slot_day,
-      slot_type,
-      slot_number,
-      number_of_persons,
-      menu_id,
-      menu_items_ids || null,
-      add_service_ids || null,
+      date || null,
+      num_of_persons || 0,
+      JSON.stringify(additional_services) || "[]",
+      JSON.stringify(selectedMenu) || "{}",
+      booker_type || null,
+      status,
+      additionalPrice,
       discount,
+      notes || null,
+      JSON.stringify(add_service_ids) || "[]",
+      JSON.stringify(menu_items_ids) || "[]",
+      total_menu_price || 0,
+      grandTotal || 0,
+      total_price || 0,
+      JSON.stringify(SLOT) || "{}",
       advance,
       total_remaining,
-      total_amount,
-      notes || null,
-      isDrafted || 0,
-      status || null,
-      JSON.stringify(SLOT),
+      payment_received,
       dashboardDate
     ],
 
@@ -181,6 +189,42 @@ router.post("/", (req, res) => {
       } else {
         console.log(`Booking created successfully with ID ${this.lastID}.`);
         res.status(201).json({ id: this.lastID });
+        // db.get("SELECT * FROM vendors WHERE name = ?", ["STAGE DECORE"], (err, row) => {
+        //   if (err) {
+        //     console.error("Error fetching vendor balance:", err.message);
+        //     return res.status(500).json({ error: err.message });
+        //   }
+        //   if(!row) {
+        //     console.error("Vendor not found");
+        //   }        
+        //   let balance = row ? row.balance : 0;
+        //   let vendor_id = row.vendor_id;
+        //   balance = balance + total_amount;
+        //   let ledgerName = "EXV";
+        //   let amountCredit = total_amount;
+        //   let amountDebit = 0;
+          
+        //   db.run(
+        //     `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
+        //     VALUES (?, ?, ?, ?, ?, ?)`,
+        //     [ledgerName, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance],
+        //     function (err) {
+        //       if (err) {
+        //         console.error("Error creating ledger entry:", err.message);
+        //         return res.status(500).json({ error: err.message });
+        //       }
+  
+        //       // Now update vendor balance
+        //       db.run("UPDATE vendors SET balance = ? WHERE name = 'FOOD EXPENSE'", [balance], function (err) {
+        //         if (err) {
+        //           console.error("Error updating vendor balance:", err.message);
+        //         }
+        //       });
+              
+        //       res.status(201).json({ response });
+        //     }
+        //   );
+        // });
       }
     }
   );
@@ -202,64 +246,64 @@ router.delete("/:id", (req, res) => {
   });
 });
 
-// Update a booking
 router.put("/:id", (req, res) => {
   const { id } = req.params;
   const {
-    booking_name,
+    reservation_name,
     contact_number,
     alt_contact_number,
     booking_type,
-    event_type,
     description,
-    slot_day,
-    slot_type,
-    slot_number,
-    number_of_persons,
-    menu_id,
-    menu_items_ids,
-    add_service_ids,
-    discount = 0,
-    advance = 0,
-    total_remaining = 0,
-    notes,
-    isDrafted = 0,
+    date,
+    num_of_persons,
+    additional_services,
+    selectedMenu,
+    booker_type,
     status = null,
-    SLOT
+    additionalPrice = 0,
+    discount = 0,
+    notes,
+    add_service_ids,
+    menu_items_ids,
+    total_menu_price,
+    grandTotal,
+    total_price,
+    SLOT,
+    advance = 0,
   } = req.body;
 
-  const total_amount = req.body.total_remaining + req.body.advance;
   const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
 
   db.run(
     `UPDATE bookings SET 
-      booking_name = ?, contact_number = ?, alt_contact_number = ?, booking_type = ?, event_type = ?, description = ?, 
-      slot_day = ?, slot_type = ?, slot_number = ?, number_of_persons = ?, menu_id = ?, menu_items_ids = ?, add_service_ids = ?, 
-      discount = ?, advance = ?, total_remaining = ?, total_amount = ?, notes = ?, isDrafted = ?, status = ?, SLOT = ?, dashboardDate = ? 
+      reservation_name = ?, contact_number = ?, alt_contact_number = ?, booking_type = ?, description = ?, 
+      date = ?, number_of_persons = ?, additional_services = ?, selectedMenu = ?, booker_type = ?, status = ?, 
+      additionalPrice = ?, discount = ?, notes = ?, add_service_ids = ?, menu_items_ids = ?, total_menu_price = ?, 
+      grandTotal = ?, total_price = ?, SLOT = ?, advance = ?, dashboardDate = ? 
      WHERE booking_id = ?`,
 
-    [ 
-      booking_name || null,
+    [
+      reservation_name || null,
       contact_number || null,
       alt_contact_number || null,
-      booking_type,
-      event_type,
+      booking_type || null,
       description || null,
-      slot_day,
-      slot_type,
-      slot_number,
-      number_of_persons,
-      menu_id,
-      menu_items_ids || null,
-      add_service_ids || null,
+      date || null,
+      num_of_persons || 0,
+      JSON.stringify(additional_services) || "[]",
+      JSON.stringify(selectedMenu) || "{}",
+      booker_type || null,
+      status,
+      additionalPrice,
       discount,
-      advance,
-      total_remaining,
-      total_amount,
       notes || null,
-      isDrafted || 0,
-      status || null,
-      JSON.stringify(SLOT),
+      JSON.stringify(add_service_ids) || "[]",
+      JSON.stringify(menu_items_ids) || "[]",
+      total_menu_price || 0,
+      grandTotal || 0,
+      total_price || 0,
+      JSON.stringify(SLOT) || "{}",
+      advance,
       dashboardDate,
       id
     ],

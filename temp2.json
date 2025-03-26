@@ -1,0 +1,67 @@
+{
+    "reservation_name": "name",
+    "contact_number": "123456",
+    "alt_contact_number": "765432",
+    "booking_type": "Conference",
+    "description": "jhabsc",
+    "date": "2025-03-26T17:39:24.124Z",
+    "num_of_persons": 1000,
+    "additional_services": [
+        {
+            "additional_service_id": 2,
+            "additional_service_name": "Catering Service",
+            "additional_service_name_urdu": "کیٹرنگ سروس",
+            "description": "Full-service catering.",
+            "price": 2000,
+            "isEditable": 1,
+            "category": "Service",
+            "createdAt": "2025-03-26 07:22:09",
+            "updatedAt": "2025-03-26 07:22:09",
+            "selected": true,
+            "quantity": 10,
+            "totalPrice": 20000
+        },
+        {
+            "additional_service_id": 1,
+            "additional_service_name": "Audio System",
+            "additional_service_name_urdu": "آڈیو سسٹم",
+            "description": "High quality sound system.",
+            "price": 500,
+            "isEditable": 1,
+            "category": "Equipment",
+            "createdAt": "2025-03-26 07:22:08",
+            "updatedAt": "2025-03-26 07:22:08",
+            "selected": true,
+            "quantity": 19,
+            "totalPrice": 9500
+        }
+    ],
+    "selectedMenu": {
+        "sNo": 1,
+        "menu_id": 3,
+        "menu_name": "Birthday Party Menu",
+        "menu_name_urdu": "سالگرہ پارٹی مینو",
+        "menu_item_ids": ["1", "2", "3"],
+        "description": "Fun birthday party menu.",
+        "isActive": true,
+        "menu_price": 300,
+        "price": 3000,
+        "finalPrice": 3000000
+    },
+    "booker_type": "Bride",
+    "status": null,
+    "additionalPrice": 29500,
+    "discount": 29500,
+    "notes": "note",
+    "add_service_ids": [2, 1],
+    "menu_items_ids": [1, 3],
+    "total_menu_price": 3000000,
+    "grandTotal": 3029500,
+    "total_price": 3000000,
+    "totalAdditionalPrice": 29500,
+    "SLOT": {
+        "hall": "Premium",
+        "date": "26_Mar_2025",
+        "slot": "Evening"
+    }
+}
