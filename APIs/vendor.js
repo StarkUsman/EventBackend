@@ -63,6 +63,36 @@ router.get("/category", (req, res) => {
   });
 });
 
+//get all vendors where category is Assets or assets
+router.get("/assets", (req, res) => {
+  db.all("SELECT * FROM vendors WHERE category = 'assets' OR category = 'Assets' ORDER BY vendor_id DESC", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching vendors:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      const formattedData = rows.map((vendor, index) => ({
+        id: vendor.vendor_id,
+        sNo: index + 1,
+        name: vendor.name,
+        email: vendor.email,
+        phone: vendor.phone,
+        category: vendor.category,
+        subcategory: vendor.subcategory,
+        created: new Date(vendor.created_at).toLocaleString("en-US", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+        balance: vendor.balance.toFixed(2),
+      }));
+      res.json({ data: formattedData, totalData: formattedData.length });
+    }
+  });
+});
+
 // Get a specific vendor
 router.get("/:id", (req, res) => {
   const { id } = req.params;

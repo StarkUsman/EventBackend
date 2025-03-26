@@ -140,11 +140,6 @@ router.post("/", (req, res) => {
     SLOT
   } = req.body;
 
-  // Ensure required fields are provided
-  // if (!booking_type || !event_type || !slot_day || !slot_type || slot_number === undefined || !number_of_persons || !menu_id) {
-  //   return res.status(400).json({ error: "All required fields (booking_type, event_type, slot_day, slot_type, slot_number, number_of_persons, menu_id, total_amount) must be provided." });
-  // }
-
   const total_amount = req.body.total_remaining + req.body.advance;
   const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
 
@@ -204,6 +199,176 @@ router.delete("/:id", (req, res) => {
       console.log(`Booking with ID ${id} deleted successfully.`);
       res.json({ message: "Booking deleted successfully." });
     }
+  });
+});
+
+// Update a booking
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const {
+    booking_name,
+    contact_number,
+    alt_contact_number,
+    booking_type,
+    event_type,
+    description,
+    slot_day,
+    slot_type,
+    slot_number,
+    number_of_persons,
+    menu_id,
+    menu_items_ids,
+    add_service_ids,
+    discount = 0,
+    advance = 0,
+    total_remaining = 0,
+    notes,
+    isDrafted = 0,
+    status = null,
+    SLOT
+  } = req.body;
+
+  const total_amount = req.body.total_remaining + req.body.advance;
+  const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
+
+  db.run(
+    `UPDATE bookings SET 
+      booking_name = ?, contact_number = ?, alt_contact_number = ?, booking_type = ?, event_type = ?, description = ?, 
+      slot_day = ?, slot_type = ?, slot_number = ?, number_of_persons = ?, menu_id = ?, menu_items_ids = ?, add_service_ids = ?, 
+      discount = ?, advance = ?, total_remaining = ?, total_amount = ?, notes = ?, isDrafted = ?, status = ?, SLOT = ?, dashboardDate = ? 
+     WHERE booking_id = ?`,
+
+    [ 
+      booking_name || null,
+      contact_number || null,
+      alt_contact_number || null,
+      booking_type,
+      event_type,
+      description || null,
+      slot_day,
+      slot_type,
+      slot_number,
+      number_of_persons,
+      menu_id,
+      menu_items_ids || null,
+      add_service_ids || null,
+      discount,
+      advance,
+      total_remaining,
+      total_amount,
+      notes || null,
+      isDrafted || 0,
+      status || null,
+      JSON.stringify(SLOT),
+      dashboardDate,
+      id
+    ],
+
+    function (err) {
+      if (err) {
+        console.error(`Error updating booking with ID ${id}:`, err.message);
+        res.status(500).json({ error: err.message });
+      } else if (this.changes === 0) {
+        res.status(404).json({ message: "Booking not found" });
+      } else {
+        console.log(`Booking with ID ${id} updated successfully.`);
+        res.json({ message: "Booking updated successfully." });
+      }
+    }
+  );
+});
+
+// Update booking status
+router.put("/status/:id", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  db.run(
+    `UPDATE bookings SET status = ? WHERE booking_id = ?`,
+    [status, id],
+    function (err) {
+      if (err) {
+        console.error(`Error updating booking status with ID ${id}:`, err.message);
+        res.status(500).json({ error: err.message });
+      } else if (this.changes === 0) {
+        res.status(404).json({ message: "Booking not found" });
+      } else {
+        console.log(`Booking status with ID ${id} updated successfully.`);
+        res.json({ message: "Booking status updated successfully." });
+      }
+    }
+  );
+});
+
+// Update booking add payment
+router.put("/payment/:id", (req, res) => {
+  const { id } = req.params;
+
+  console.log("req.body", req.body);
+
+  const { paymentToAdd, account_id } = req.body;
+
+  db.get(`SELECT * FROM bookings WHERE booking_id = ?`, [id], (err, row) => {
+    if (err) {
+      console.error(`Error fetching booking with ID ${id}:`, err.message);
+      return res.status(500).json({ error: err.message });
+    } else if (!row) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    const total_remaining = row.total_remaining - paymentToAdd;
+    let payment_received = row.payment_received ? row.payment_received : 0;
+    payment_received += paymentToAdd;
+
+    db.run(
+      `UPDATE bookings SET payment_received = ?, total_remaining = ? WHERE booking_id = ?`,
+      [payment_received, total_remaining, id],
+      function (err) {
+        if (err) {
+          console.error(`Error updating booking payment with ID ${id}:`, err.message);
+          res.status(500).json({ error: err.message });
+        } else if (this.changes === 0) {
+          res.status(404).json({ message: "Booking not found" });
+        } else {
+          console.log(`Booking payment with ID ${id} updated successfully.`);
+        }
+      }
+    );
+
+    db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [account_id], (err, row) => {
+      if (err) {
+        console.error("Error fetching vendor balance:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+  
+      let balance = row ? row.balance : 0;
+      balance += paymentToAdd;
+      let ledgerName = "RPV";
+      let amountCredit = paymentToAdd;
+      let amountDebit = 0;
+      let purch_id = id;
+  
+      db.run(
+        `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [ledgerName, purch_id, account_id, amountDebit || 0, amountCredit || 0, balance],
+        function (err) {
+          if (err) {
+            console.error("Error creating ledger entry:", err.message);
+            return res.status(500).json({ error: err.message });
+          }
+  
+          db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, account_id], function (err) {
+            if (err) {
+              console.error("Error updating vendor balance:", err.message);
+            }
+          });
+  
+          res.status(201).json({ id: this.lastID });
+        }
+      );
+    });
+    
   });
 });
 

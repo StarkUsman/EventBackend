@@ -104,12 +104,13 @@ const initDatabase = () => {
       isDrafted BOOLEAN DEFAULT 0,
       status TEXT,
       SLOT JSON,
+      payment_received INTEGER DEFAULT 0,
       dashboardDate TEXT
     );`,
 
     `CREATE TABLE IF NOT EXISTS vendors (
         vendor_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
         email TEXT,
         phone TEXT,
         balance REAL DEFAULT 0,
