@@ -62,7 +62,7 @@ const initDatabase = () => {
 
     `CREATE TABLE IF NOT EXISTS additionalServices (
       additional_service_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      additional_service_name TEXT NOT NULL,
+      additional_service_name TEXT NOT NULL UNIQUE,
       additional_service_name_urdu TEXT,
       description TEXT,
       price REAL NOT NULL,
@@ -164,7 +164,7 @@ const initDatabase = () => {
       category TEXT NOT NULL,
       alertQuantity INTEGER,
       unit TEXT,
-      quantity INTEGER,
+      quantity INTEGER default 0,
       purchasePrice REAL NOT NULL,
       img TEXT,
       description TEXT
@@ -232,7 +232,21 @@ const initDatabase = () => {
       notes TEXT,
       voucher TEXT NOT NULL,
       checkNumber TEXT
-    )`
+    )`,
+
+    `CREATE TABLE IF NOT EXISTS inventoryLedger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      user JSON,
+      purchasePrice REAL NOT NULL,
+      voucher TEXT NOT NULL,
+      product_id INTEGER NOT NULL,
+      stockOut INTEGER NOT NULL,
+      stockIn INTEGER NOT NULL,
+      quantity INTEGER NOT NULL,
+      createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (product_id) REFERENCES product (id)
+    );`,
 
   ];
 

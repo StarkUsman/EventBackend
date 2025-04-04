@@ -121,7 +121,8 @@ const initializeDatabase = () => {
   // 7. Insert data into additionalServices
   const additionalServices = [
     { additional_service_name: "Audio System", additional_service_name_urdu: "آڈیو سسٹم", description: "High quality sound system.", price: 500, category: "Equipment" },
-    { additional_service_name: "Catering Service", additional_service_name_urdu: "کیٹرنگ سروس", description: "Full-service catering.", price: 2000, category: "Service" }
+    { additional_service_name: "Catering Service", additional_service_name_urdu: "کیٹرنگ سروس", description: "Full-service catering.", price: 2000, category: "Service" },
+    { additional_service_name: "Stage Decor", additional_service_name_urdu: "اسٹیج سجاوٹ", description: "Elegant stage decoration with lighting and floral arrangements.", price: 5000, category: "Service"}    
   ];
 
   additionalServices.forEach(service => {

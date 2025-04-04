@@ -18,6 +18,7 @@ const productRoutes = require("./APIs/products")
 const purchaseRoutes = require("./APIs/purchase");
 const inventoryRoutes = require("./APIs/inventory");
 const ledgerRoutes = require("./APIs/ledger");
+const inventoryLedgerRoutes = require("./APIs/inventoryLedger");
 const expensesRoutes = require("./APIs/expenses");
 const dashboardRoutes = require("./APIs/dashboard");
 const AcategoryRoutes = require("./APIs/Acategory");
@@ -43,6 +44,7 @@ router.use("/products", productRoutes);
 router.use("/purchase", purchaseRoutes);
 router.use("/inventory", inventoryRoutes);
 router.use("/ledger", ledgerRoutes);
+router.use("/inventoryLedger", inventoryLedgerRoutes);
 router.use("/expenses", expensesRoutes);
 router.use("/dash", dashboardRoutes);
 router.use("/acategory", AcategoryRoutes);

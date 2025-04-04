@@ -31,7 +31,7 @@ router.get("/", (req, res) => {
       category: product.category_name, // Using category_name from categories table
       unit: product.unit_name, // Using unit_name from units table
       quantity: product.quantity,
-      purchasePrice: `PKR${parseFloat((product.purchasePrice || 0).toString().replace(/[^0-9.]/g, "")).toFixed(2)}`,
+      purchasePrice: product.purchasePrice.toFixed(2),
       img: product.img,
       description: product.description
     }));

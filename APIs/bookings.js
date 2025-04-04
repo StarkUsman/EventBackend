@@ -188,43 +188,100 @@ router.post("/", (req, res) => {
         res.status(500).json({ error: err.message });
       } else {
         console.log(`Booking created successfully with ID ${this.lastID}.`);
-        res.status(201).json({ id: this.lastID });
-        // db.get("SELECT * FROM vendors WHERE name = ?", ["STAGE DECORE"], (err, row) => {
-        //   if (err) {
-        //     console.error("Error fetching vendor balance:", err.message);
-        //     return res.status(500).json({ error: err.message });
-        //   }
-        //   if(!row) {
-        //     console.error("Vendor not found");
-        //   }        
-        //   let balance = row ? row.balance : 0;
-        //   let vendor_id = row.vendor_id;
-        //   balance = balance + total_amount;
-        //   let ledgerName = "EXV";
-        //   let amountCredit = total_amount;
-        //   let amountDebit = 0;
-          
-        //   db.run(
-        //     `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
-        //     VALUES (?, ?, ?, ?, ?, ?)`,
-        //     [ledgerName, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance],
-        //     function (err) {
-        //       if (err) {
-        //         console.error("Error creating ledger entry:", err.message);
-        //         return res.status(500).json({ error: err.message });
-        //       }
-  
-        //       // Now update vendor balance
-        //       db.run("UPDATE vendors SET balance = ? WHERE name = 'FOOD EXPENSE'", [balance], function (err) {
-        //         if (err) {
-        //           console.error("Error updating vendor balance:", err.message);
-        //         }
-        //       });
-              
-        //       res.status(201).json({ response });
-        //     }
-        //   );
-        // });
+        let purch_id = this.lastID;
+        let response = { id: this.lastID };
+        // res.status(201).json({ id: this.lastID });
+        let isSoundLedgerEnabled = false;
+        let isStageDecoreEnabled = false;
+        let soundServicePrice = 0;
+        let stageDecoreServicePrice = 0;
+        if(req.body.additional_services && req.body.additional_services != []){
+          for (let i = 0; i< req.body.additional_services.length; i++){
+            if(req.body.additional_services[i].additional_service_name == "Audio System"){
+              isSoundLedgerEnabled = true;
+              soundServicePrice = req.body.additional_services[i].totalPrice;
+            }
+            if(req.body.additional_services[i].additional_service_name == "Stage Decor"){
+              isStageDecoreEnabled = true;
+              stageDecoreServicePrice = req.body.additional_services[i].totalPrice;
+            }
+          }
+        }
+
+        if (isSoundLedgerEnabled){
+          db.get("SELECT * FROM vendors WHERE name = ?", ["SOUND"], (err, row) => {
+            if (err) {
+              console.error("Error fetching vendor balance:", err.message);
+              return res.status(500).json({ error: err.message });
+            }
+            if(!row) {
+              console.error("Vendor not found");
+            }        
+            let balance = row ? row.balance : 0;
+            let vendor_id = row.vendor_id;
+            balance = balance + soundServicePrice;
+            let ledgerName = "RES:"+reservation_name;
+            let amountDebit = soundServicePrice;
+            let amountCredit = 0;
+            
+            db.run(
+              `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
+              VALUES (?, ?, ?, ?, ?, ?)`,
+              [ledgerName, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance],
+              function (err) {
+                if (err) {
+                  console.error("Error creating ledger entry:", err.message);
+                  return res.status(500).json({ error: err.message });
+                }
+    
+                // Now update vendor balance
+                db.run("UPDATE vendors SET balance = ? WHERE name = 'SOUND'", [balance], function (err) {
+                  if (err) {
+                    console.error("Error updating vendor balance:", err.message);
+                  }
+                });                
+              }
+            );
+          });
+        }
+
+        if (isStageDecoreEnabled){
+          db.get("SELECT * FROM vendors WHERE name = ?", ["STAGE DECORE"], (err, row) => {
+            if (err) {
+              console.error("Error fetching vendor balance:", err.message);
+              return res.status(500).json({ error: err.message });
+            }
+            if(!row) {
+              console.error("Vendor not found");
+            }        
+            let balance = row ? row.balance : 0;
+            let vendor_id = row.vendor_id;
+            balance = balance + stageDecoreServicePrice;
+            let ledgerName = "RES:"+reservation_name;
+            let amountDebit = stageDecoreServicePrice;
+            let amountCredit = 0;
+            
+            db.run(
+              `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
+              VALUES (?, ?, ?, ?, ?, ?)`,
+              [ledgerName, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance],
+              function (err) {
+                if (err) {
+                  console.error("Error creating ledger entry:", err.message);
+                  return res.status(500).json({ error: err.message });
+                }
+    
+                // Now update vendor balance
+                db.run("UPDATE vendors SET balance = ? WHERE name = 'STAGE DECORE'", [balance], function (err) {
+                  if (err) {
+                    console.error("Error updating vendor balance:", err.message);
+                  }
+                });                
+              }
+            );
+          });
+        }
+        res.status(201).json(response);
       }
     }
   );
