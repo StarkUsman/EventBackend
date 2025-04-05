@@ -248,6 +248,20 @@ const initDatabase = () => {
       FOREIGN KEY (product_id) REFERENCES product (id)
     );`,
 
+    `CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      firstName TEXT,
+      lastName TEXT,
+      username TEXT NOT NULL UNIQUE,
+      email TEXT,
+      phone TEXT,
+      password TEXT NOT NULL,
+      role TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'inActive',
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+    );`,
+
   ];
 
   queries.forEach((query) => {

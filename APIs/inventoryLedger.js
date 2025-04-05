@@ -103,8 +103,6 @@ router.get("/:product_id", (req, res) => {
     );
   }
   else {
-    console.log("Fetching inventoryLedger for product_id:", product_id);
-
     db.all("SELECT * FROM inventoryLedger WHERE product_id = ? ORDER BY createdAt DESC", [product_id], (err, rows) => {
       if (err) {
         console.error("Error fetching ledger entries:", err.message);
