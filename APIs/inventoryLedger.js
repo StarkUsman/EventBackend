@@ -9,8 +9,13 @@ router.get("/", (req, res) => {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
     } else {
-      res.json({ data: rows, totalData: rows.length });
-    }
+      // res.json({ data: rows, totalData: rows.length });
+      const formattedResponse = rows.map((row) => ({
+          ...row,
+          user: JSON.parse(row.user || '{}'),
+        }));
+      res.json({ data: formattedResponse, totalData: rows.length });
+    };
   });
 });
 
@@ -22,7 +27,12 @@ router.get("/stockIn/:id", (req, res) => {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
     } else {
-      res.json({ data: rows, totalData: rows.length });
+      // res.json({ data: rows, totalData: rows.length });
+      const formattedResponse = rows.map((row) => ({
+          ...row,
+          user: JSON.parse(row.user || '{}'),
+        }));
+      res.json({ data: formattedResponse, totalData: rows.length });
     }
   });
 });
@@ -35,7 +45,12 @@ router.get("/stockOut/:id", (req, res) => {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
     } else {
-      res.json({ data: rows, totalData: rows.length });
+      // res.json({ data: rows, totalData: rows.length });
+      const formattedResponse = rows.map((row) => ({
+          ...row,
+          user: JSON.parse(row.user || '{}'),
+        }));
+      res.json({ data: formattedResponse, totalData: rows.length });
     }
   });
 });
@@ -70,7 +85,12 @@ router.get("/:product_id", (req, res) => {
           console.error("Error fetching ledger entries:", err.message);
           res.status(500).json({ error: err.message });
         } else {
-          res.json({ data: rows, totalData: rows.length });
+          // res.json({ data: rows, totalData: rows.length });
+          const formattedResponse = rows.map((row) => ({
+            ...row,
+            user: JSON.parse(row.user || '{}'),
+          }));
+          res.json({ data: formattedResponse, totalData: rows.length });
         }
       }
     );
@@ -83,7 +103,12 @@ router.get("/:product_id", (req, res) => {
           console.error("Error fetching ledger entries:", err.message);
           res.status(500).json({ error: err.message });
         } else {
-          res.json({ data: rows, totalData: rows.length });
+          // res.json({ data: rows, totalData: rows.length });
+          const formattedResponse = rows.map((row) => ({
+            ...row,
+            user: JSON.parse(row.user || '{}'),
+          }));
+          res.json({ data: formattedResponse, totalData: rows.length });
         }
       }
     );
@@ -97,7 +122,12 @@ router.get("/:product_id", (req, res) => {
           console.error("Error fetching ledger entries:", err.message);
           res.status(500).json({ error: err.message });
         } else {
-          res.json({ data: rows, totalData: rows.length });
+          // res.json({ data: rows, totalData: rows.length });
+          const formattedResponse = rows.map((row) => ({
+            ...row,
+            user: JSON.parse(row.user || '{}'),
+          }));
+          res.json({ data: formattedResponse, totalData: rows.length });
         }
       }
     );
@@ -108,7 +138,12 @@ router.get("/:product_id", (req, res) => {
         console.error("Error fetching ledger entries:", err.message);
         res.status(500).json({ error: err.message });
       } else {
-        res.json({ data: rows, totalData: rows.length });
+        // res.json({ data: rows, totalData: rows.length });
+        const formattedResponse = rows.map((row) => ({
+          ...row,
+          user: JSON.parse(row.user || '{}'),
+        }));
+        res.json({ data: formattedResponse, totalData: rows.length });
       }
     });
   }
@@ -117,7 +152,7 @@ router.get("/:product_id", (req, res) => {
 // Create a new ledger entry
 router.post("/", (req, res) => {
   
-  const { name, purchasePrice, voucher, product_id, stockOut, stockIn } = req.body;
+  const { name, purchasePrice, user, voucher, product_id, stockOut, stockIn } = req.body;
   if (!name || !purchasePrice || !voucher || !product_id || (!stockOut && !stockIn)) {
     console.log("All fields are required.");
     return res.status(400).json({ error: "All fields are required." });
@@ -139,12 +174,13 @@ router.post("/", (req, res) => {
       quantity -= stockOut;
     }
 
-    let user = {};
+    console.log(user);
+    // let user = {};
 
     // Insert into ledger **inside** the callback to ensure correct balance usage
     db.run(
       `INSERT INTO inventoryLedger (name, user, purchasePrice, voucher, product_id, stockOut, stockIn, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [name, user || null, purchasePrice, voucher, product_id, stockOut, stockIn, quantity],
+      [name, JSON.stringify(user) || '{}', purchasePrice, voucher, product_id, stockOut, stockIn, quantity],
       function (err) {
         if (err) {
           console.error("Error creating inventoryLedger entry:", err.message);
