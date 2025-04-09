@@ -3,14 +3,14 @@ const router = express.Router();
 const db = require("../models/database");
 
 router.post("/", (req, res) => {
-  const { category, description } = req.body;
+  const { category, description, subcategory } = req.body;
 
   if (!category) {
     return res.status(400).json({ error: "Category name is required." });
   }
 
-  const sql = `INSERT INTO Acategory (category, description) VALUES (?, ?)`;
-  db.run(sql, [category, description], function (err) {
+  const sql = `INSERT INTO Acategory (category, description, subcategory) VALUES (?, ?, ?)`;
+  db.run(sql, [category, description, JSON.stringify(subcategory)], function (err) {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -31,6 +31,7 @@ router.get("/", (req, res) => {
       sNo: index + 1,
       id: row.id,
       category: row.category,
+      subcategory: JSON.parse(row.subcategory || '[]'),
       description: row.description
     }));
 
@@ -52,22 +53,26 @@ router.get("/:id", (req, res) => {
     if (!row) {
       return res.status(404).json({ error: "Category not found." });
     }
+    const formattedRow = {
+      ...row,
+      subcategory: JSON.parse(row.subcategory || '[]')
+    }
 
-    res.json(row);
+    res.json(formattedRow);
   });
 });
 
 // 🟠 UPDATE CATEGORY
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { category, description } = req.body;
+  const { category, description, subcategory } = req.body;
 
   if (!category) {
     return res.status(400).json({ error: "Category name is required." });
   }
 
-  const sql = `UPDATE Acategory SET category = ?, description = ? WHERE id = ?`;
-  db.run(sql, [category, description, id], function (err) {
+  const sql = `UPDATE Acategory SET category = ?, description = ?, subcategory = ? WHERE id = ?`;
+  db.run(sql, [category, description, JSON.stringify(subcategory), id], function (err) {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

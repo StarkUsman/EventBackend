@@ -148,7 +148,8 @@ const initDatabase = () => {
     `CREATE TABLE IF NOT EXISTS Acategory (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       category TEXT NOT NULL UNIQUE,
-      description TEXT
+      description TEXT,
+      subcategory JSON
     );`,
 
     `CREATE TABLE IF NOT EXISTS Asubcategory (

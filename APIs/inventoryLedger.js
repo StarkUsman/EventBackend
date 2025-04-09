@@ -174,7 +174,6 @@ router.post("/", (req, res) => {
       quantity -= stockOut;
     }
 
-    console.log(user);
     // let user = {};
 
     // Insert into ledger **inside** the callback to ensure correct balance usage
