@@ -114,7 +114,7 @@ const initDatabase = () => {
         email TEXT,
         phone TEXT,
         balance REAL DEFAULT 0,
-        category TEXT default null,
+        category JSON,
         subcategory TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       );`,

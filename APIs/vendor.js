@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
         name: vendor.name,
         email: vendor.email,
         phone: vendor.phone,
-        category: vendor.category,
+        category: JSON.parse(vendor.category),
         subcategory: vendor.subcategory,
         created: new Date(vendor.created_at).toLocaleString("en-US", {
           day: "2-digit",
@@ -35,18 +35,22 @@ router.get("/", (req, res) => {
 
 // Get all vendors where category = vendor
 router.get("/category", (req, res) => {
-  db.all("SELECT * FROM vendors WHERE category = 'vendor' OR category = 'Vendor' ORDER BY vendor_id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM vendors ORDER BY vendor_id DESC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);
       res.status(500).json({ error: err.message });
     } else {
-      const formattedData = rows.map((vendor, index) => ({
+      let filteredRows = rows.filter((vendor) => {
+        const category = JSON.parse(vendor.category);
+        return category && (category.category === "vendor" || category.category === "Vendor");
+      });
+      const formattedData = filteredRows.map((vendor, index) => ({
         id: vendor.vendor_id,
         sNo: index + 1,
         name: vendor.name,
         email: vendor.email,
         phone: vendor.phone,
-        category: vendor.category,
+        category: JSON.parse(vendor.category),
         subcategory: vendor.subcategory,
         created: new Date(vendor.created_at).toLocaleString("en-US", {
           day: "2-digit",
@@ -76,7 +80,7 @@ router.get("/assets", (req, res) => {
         name: vendor.name,
         email: vendor.email,
         phone: vendor.phone,
-        category: vendor.category,
+        category: JSON.parse(vendor.category),
         subcategory: vendor.subcategory,
         created: new Date(vendor.created_at).toLocaleString("en-US", {
           day: "2-digit",
@@ -101,7 +105,11 @@ router.get("/:id", (req, res) => {
       console.error(`Error fetching vendor with ID ${id}:`, err.message);
       res.status(500).json({ error: err.message });
     } else if (row) {
-      res.json(row);
+      const formattedResponse = {
+        ...row,
+        category: JSON.parse(row.category || '{}'),
+      }
+      res.json(formattedResponse);
     } else {
       res.status(404).json({ message: "Vendor not found" });
     }
@@ -119,7 +127,7 @@ router.post("/", (req, res) => {
   db.run(
     `INSERT INTO vendors (name, email, phone, balance, category, subcategory) 
      VALUES (?, ?, ?, ?, ?, ?)`,
-    [name, email || null, phone || null, balance || 0, category || null, subcategory || null],
+    [name, email || null, phone || null, balance || 0, JSON.stringify(category) || null, subcategory || null],
     function (err) {
       if (err) {
         console.error("Error creating vendor:", err.message);
@@ -136,8 +144,6 @@ router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { name, email, phone, balance, category, subcategory } = req.body;
 
-  const venor = db.get("SELECT * FROM vendors WHERE vendor_id = ?", [id]);
-  console.log("vendorbeforeUpdate: ", venor);
   db.run(
     `UPDATE vendors SET 
       name = ?, 
@@ -147,7 +153,7 @@ router.put("/:id", (req, res) => {
       category = ?,
       subcategory = ?
      WHERE vendor_id = ?`,
-    [name, email, phone, balance, category, subcategory, id],
+    [name, email, phone, balance, JSON.stringify(category), subcategory, id],
     function (err) {
       if (err) {
         console.error(`Error updating vendor with ID ${id}:`, err.message);
@@ -155,7 +161,6 @@ router.put("/:id", (req, res) => {
       } else if (this.changes === 0) {
         res.status(404).json({ message: "Vendor not found" });
       } else {
-        console.log("vendorAfterUpdate: ", db.get("SELECT * FROM vendors WHERE vendor_id = ?", [id]));
         res.json({ message: "Vendor updated successfully." });
       }
     }

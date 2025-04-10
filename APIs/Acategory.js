@@ -42,6 +42,26 @@ router.get("/", (req, res) => {
   });
 });
 
+//get category by name where category.category to lower case == "expense"
+router.get("/EXPENSE", (req, res) => {
+  db.get("SELECT * FROM Acategory WHERE LOWER(category) = 'expense'", [], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (!row) {
+      return res.status(404).json({ error: "Category not found." });
+    }
+
+    const formattedRow = {
+      ...row,
+      subcategory: JSON.parse(row.subcategory || '[]')
+    }
+
+    res.json(formattedRow);
+  })
+});
+
 // 🔵 GET CATEGORY BY ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;
