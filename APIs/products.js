@@ -6,7 +6,7 @@ const db = require("../models/database");
 router.get("/", (req, res) => {
   const query = `
     SELECT 
-      p.id, p.item, p.code, p.quantity, 
+      p.id, p.item, p.code, p.quantity, p.alertQuantity,
       p.purchasePrice, p.img, p.description,
       c.category AS category_name,
       u.unit_name AS unit_name
