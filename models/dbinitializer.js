@@ -407,6 +407,24 @@ bookings.forEach(booking => {
     );
   });
 
+  const acategory = {
+      "category": "Expense",
+      "subcategory": [],
+      "description": "Expenses"
+      };
+  
+      db.run(
+        `INSERT INTO Acategory (category, subcategory, description) VALUES (?, ?, ?)`,
+        [acategory.category, JSON.stringify(acategory.subcategory), acategory.description],
+        function (err) {
+          if (err) {
+            console.error("Error inserting aCategory:", err.message);
+          } else {
+            console.log(`Inserted unit: ${acategory.category}`);
+          }
+        }
+      )
+
   const products = [
     {
     "item": "Lenovo 3rd Generation",

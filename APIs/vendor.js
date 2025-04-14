@@ -13,6 +13,7 @@ router.get("/", (req, res) => {
         id: vendor.vendor_id,
         sNo: index + 1,
         name: vendor.name,
+        name_urdu: vendor.name_urdu,
         email: vendor.email,
         phone: vendor.phone,
         category: JSON.parse(vendor.category),
@@ -48,6 +49,7 @@ router.get("/category", (req, res) => {
         id: vendor.vendor_id,
         sNo: index + 1,
         name: vendor.name,
+        name_urdu: vendor.name_urdu,
         email: vendor.email,
         phone: vendor.phone,
         category: JSON.parse(vendor.category),
@@ -78,6 +80,7 @@ router.get("/assets", (req, res) => {
         id: vendor.vendor_id,
         sNo: index + 1,
         name: vendor.name,
+        name_urdu: vendor.name_urdu,
         email: vendor.email,
         phone: vendor.phone,
         category: JSON.parse(vendor.category),
@@ -118,16 +121,16 @@ router.get("/:id", (req, res) => {
 
 // Create a new vendor
 router.post("/", (req, res) => {
-  const { name, email, phone, balance, category, subcategory } = req.body;
+  const { name, name_urdu, email, phone, balance, category, subcategory } = req.body;
   
   if (!name) {
     return res.status(400).json({ error: "Name is required." });
   }
 
   db.run(
-    `INSERT INTO vendors (name, email, phone, balance, category, subcategory) 
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [name, email || null, phone || null, balance || 0, JSON.stringify(category) || null, subcategory || null],
+    `INSERT INTO vendors (name, name_urdu, email, phone, balance, category, subcategory) 
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [name, name_urdu, email || null, phone || null, balance || 0, JSON.stringify(category) || null, subcategory || null],
     function (err) {
       if (err) {
         console.error("Error creating vendor:", err.message);
@@ -142,18 +145,19 @@ router.post("/", (req, res) => {
 // Update a vendor
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { name, email, phone, balance, category, subcategory } = req.body;
+  const { name, name_urdu, email, phone, balance, category, subcategory } = req.body;
 
   db.run(
     `UPDATE vendors SET 
       name = ?, 
+      name_urdu = ?,
       email = ?, 
       phone = ?,
       balance = ?,
       category = ?,
       subcategory = ?
      WHERE vendor_id = ?`,
-    [name, email, phone, balance, JSON.stringify(category), subcategory, id],
+    [name, name_urdu, email, phone, balance, JSON.stringify(category), subcategory, id],
     function (err) {
       if (err) {
         console.error(`Error updating vendor with ID ${id}:`, err.message);

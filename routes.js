@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const machineAuth = require("./middleware/machineAuth")
+
+router.use(machineAuth);
 
 // Import individual route files for each table
 const hallsRoutes = require("./APIs/halls");

@@ -111,6 +111,7 @@ const initDatabase = () => {
     `CREATE TABLE IF NOT EXISTS vendors (
         vendor_id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
+        name_urdu TEXT,
         email TEXT,
         phone TEXT,
         balance REAL DEFAULT 0,
