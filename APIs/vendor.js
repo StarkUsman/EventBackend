@@ -26,7 +26,7 @@ router.get("/", (req, res) => {
           minute: "2-digit",
           hour12: true,
         }),
-        balance: vendor.balance.toFixed(2),
+        balance: vendor.balance.toFixed(2),  // returns balance as a string with 2 decimal places
         balanceNumber: vendor.balance,
       }));
       res.json({ data: formattedData, totalData: formattedData.length });
@@ -71,7 +71,12 @@ router.get("/category", (req, res) => {
 
 //get all vendors where category is Assets or assets
 router.get("/assets", (req, res) => {
-  db.all("SELECT * FROM vendors WHERE category = 'assets' OR category = 'Assets' ORDER BY vendor_id DESC", [], (err, rows) => {
+  db.all(`
+    SELECT * FROM vendors
+    WHERE JSON_EXTRACT(category, '$.category') = 'assets'
+       OR JSON_EXTRACT(category, '$.category') = 'Assets'
+    ORDER BY vendor_id DESC
+  `, [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);
       res.status(500).json({ error: err.message });

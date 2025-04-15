@@ -15,7 +15,8 @@ router.get("/", (req, res) => {
         ...row,
         additional_services: JSON.parse(row.additional_services),
         selectedMenu: JSON.parse(row.selectedMenu),
-        SLOT: JSON.parse(row.SLOT)
+        SLOT: JSON.parse(row.SLOT),
+        date: row.date.split('T')[0]
       }));
       res.json(formattedResponse);
     }
@@ -40,11 +41,12 @@ router.get("/formatted", (req, res) => {
       const formattedResponse = rows.map((row, index) => ({
         sNo: index + 1,
         ...row,
-        SLOT: safeParseJSON(row.SLOT)
+        SLOT: safeParseJSON(row.SLOT),
+        date: row.date.split('T')[0]
       }));
 
       res.json({
-        totalDocs: formattedResponse.length,
+        totalData: formattedResponse.length,
         data: formattedResponse
       });
     }
@@ -327,6 +329,7 @@ router.put("/:id", (req, res) => {
     total_price,
     SLOT,
     advance = 0,
+    total_remaining = 0,
   } = req.body;
 
   const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
@@ -336,7 +339,7 @@ router.put("/:id", (req, res) => {
       reservation_name = ?, contact_number = ?, alt_contact_number = ?, booking_type = ?, description = ?, 
       date = ?, number_of_persons = ?, additional_services = ?, selectedMenu = ?, booker_type = ?, status = ?, 
       additionalPrice = ?, discount = ?, notes = ?, add_service_ids = ?, menu_items_ids = ?, total_menu_price = ?, 
-      grandTotal = ?, total_price = ?, SLOT = ?, advance = ?, dashboardDate = ? 
+      grandTotal = ?, total_price = ?, SLOT = ?, advance = ?, dashboardDate = ?, total_remaining = ?  
      WHERE booking_id = ?`,
 
     [
@@ -362,6 +365,7 @@ router.put("/:id", (req, res) => {
       JSON.stringify(SLOT) || "{}",
       advance,
       dashboardDate,
+      total_remaining,
       id
     ],
 

@@ -75,8 +75,8 @@ router.get("/:id", (req, res) => {
 // Create a new menu item
 router.post("/", (req, res) => {
   const { item_name, item_name_urdu, description, price, category } = req.body;
-  if (!item_name || !price || !category) {
-    return res.status(400).json({ error: "Item name, price, and category are required." });
+  if (!item_name) {
+    return res.status(400).json({ error: "Item name is required." });
   }
 
   db.run(
@@ -99,8 +99,8 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { item_name, item_name_urdu, description, price, category } = req.body;
-  if (!item_name || !price || !category) {
-    return res.status(400).json({ error: "Item name, price, and category are required." });
+  if (!item_name) {
+    return res.status(400).json({ error: "Item name is required." });
   }
 
   db.run(

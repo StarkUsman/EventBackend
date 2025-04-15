@@ -82,7 +82,7 @@ router.post("/", async (req, res) => {
   // Convert menu_item_ids array to a comma-separated string
   const menuItemIdsString = arrayToString(menu_item_ids);
 
-  if (!menu_name || !menu_price) {
+  if (!menu_name) {
     return res.status(400).json({ error: "Menu name and menu price are required." });
   }
 

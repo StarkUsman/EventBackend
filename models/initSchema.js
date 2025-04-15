@@ -32,11 +32,11 @@ const initDatabase = () => {
 
     `CREATE TABLE IF NOT EXISTS menus (
       menu_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      menu_item_ids TEXT,           -- Stores comma-separated list of menu_item_id
+      menu_item_ids TEXT,
       menu_name TEXT NOT NULL,
       menu_name_urdu TEXT,
       description TEXT,
-      menu_price REAL NOT NULL,
+      menu_price REAL,
       isActive INTEGER DEFAULT 1,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -47,7 +47,7 @@ const initDatabase = () => {
       item_name TEXT NOT NULL,
       item_name_urdu TEXT,
       description TEXT,
-      price REAL NOT NULL,
+      price REAL,
       category TEXT,
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
       updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
@@ -163,7 +163,7 @@ const initDatabase = () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       item TEXT NOT NULL,
       code TEXT,
-      category TEXT NOT NULL,
+      category TEXT,
       alertQuantity INTEGER,
       unit TEXT,
       quantity INTEGER default 0,

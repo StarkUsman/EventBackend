@@ -80,7 +80,7 @@ router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { item, code, category, alertQuantity, unit, purchasePrice, quantity, img, description } = req.body;
 
-  if (!item || !unit || !purchasePrice) {
+  if (!item || !purchasePrice) {
     return res.status(400).json({ error: "Required fields are missing" });
   }
 
