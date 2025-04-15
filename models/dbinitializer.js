@@ -428,8 +428,8 @@ bookings.forEach(booking => {
   const products = [
     {
     "item": "Lenovo 3rd Generation",
-    "code": "P125389",
-      "category": "3",
+    "code": "000001",
+    "category": "3",
     "units": "1",
     "quantity": "2",
     "purchasePrice": "248.00",
@@ -437,7 +437,7 @@ bookings.forEach(booking => {
   },
   {
     "item": "Nike Jordan",
-    "code": "P125390",
+    "code": "000002",
     "category": "3",
     "units": "1",
     "quantity": "4",
@@ -446,7 +446,7 @@ bookings.forEach(booking => {
   },
   {
     "item": "Apple Series 5 Watch",
-    "code": "P125391",
+    "code": "000003",
     "category": "3",
     "units": "1",
     "quantity": "7",
@@ -455,7 +455,7 @@ bookings.forEach(booking => {
   },
   {
     "item": "Amazon Echo Dot",
-    "code": "P125392",
+    "code": "000004",
     "category": "3",
     "units": "1",
     "quantity": "3",
@@ -464,7 +464,7 @@ bookings.forEach(booking => {
   },
   {
     "item": "Lobar Handy",
-    "code": "P125393",
+    "code": "000005",
     "category": "3",
     "units": "1",
     "quantity": "1",
@@ -472,44 +472,8 @@ bookings.forEach(booking => {
     "img": "assets/img/sales-return5.svg"
   },
   {
-    "item": "Woodcraft Sandal",
-    "code": "P125394",
-    "category": "3",
-    "units": "1",
-    "quantity": "2",
-    "purchasePrice": "248.00",
-    "img": "assets/img/sales-return6.svg"
-  },
-  {
-    "item": "Black Slim 200",
-    "code": "P125394",
-    "category": "3",
-    "units": "1",
-    "quantity": "2",
-    "purchasePrice": "248.00",
-    "img": "assets/img/sales-return7.svg"
-  },
-  {
-    "item": "Red Premium Handy",
-    "code": "P125394",
-    "category": "3",
-    "units": "1",
-    "quantity": "2",
-    "purchasePrice": "248.00",
-    "img": "assets/img/sales-return8.svg"
-  },
-  {
-    "item": "Bold V3.2",
-    "code": "P125394",
-    "category": "3",
-    "units": "1",
-    "quantity": "2",
-    "purchasePrice": "248.00",
-    "img": "assets/img/sales-return9.svg"
-  },
-  {
     "item": "Iphone 14 Pro",
-    "code": "P125394",
+    "code": "000006",
     "category": "3",
     "units": "1",
     "quantity": "2",
