@@ -31,6 +31,7 @@ const purchaseReturnRoutes = require("./APIs/purchaseReturn");
 const transactionRoutes = require("./APIs/transactions");
 const usersRoutes = require("./APIs/users");
 const reportsRoutes = require("./APIs/reports");
+const salaryRoutes = require("./APIs/salary");
 
 // Define routes for all tables
 router.use("/halls", hallsRoutes);
@@ -59,5 +60,6 @@ router.use("/purchaseReturn", purchaseReturnRoutes);
 router.use("/transaction", transactionRoutes);
 router.use("/users", usersRoutes);
 router.use("/reports", reportsRoutes);
+router.use("/salary", salaryRoutes);
 
 module.exports = router;

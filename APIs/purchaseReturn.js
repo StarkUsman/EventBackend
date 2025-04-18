@@ -4,7 +4,7 @@ const db = require("../models/database");
 
 // 🚀 Get all purchases
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM purchaseReturn ORDER BY id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM purchaseReturn ORDER BY id ASC", [], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

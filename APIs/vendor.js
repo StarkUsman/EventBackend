@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Get all vendors (Formatted Response)
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM vendors ORDER BY vendor_id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM vendors ORDER BY vendor_id ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);
       res.status(500).json({ error: err.message });
@@ -36,14 +36,14 @@ router.get("/", (req, res) => {
 
 // Get all vendors where category = vendor
 router.get("/category", (req, res) => {
-  db.all("SELECT * FROM vendors ORDER BY vendor_id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM vendors ORDER BY vendor_id ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);
       res.status(500).json({ error: err.message });
     } else {
       let filteredRows = rows.filter((vendor) => {
-        const category = JSON.parse(vendor.category);
-        return category && (category.category === "vendor" || category.category === "Vendor");
+        // const category = JSON.parse(vendor.category);
+        return vendor.subcategory && (vendor.subcategory === "vendor" || vendor.subcategory === "Vendor");
       });
       const formattedData = filteredRows.map((vendor, index) => ({
         id: vendor.vendor_id,
@@ -75,7 +75,7 @@ router.get("/assets", (req, res) => {
     SELECT * FROM vendors
     WHERE JSON_EXTRACT(category, '$.category') = 'assets'
        OR JSON_EXTRACT(category, '$.category') = 'Assets'
-    ORDER BY vendor_id DESC
+    ORDER BY vendor_id ASC
   `, [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);

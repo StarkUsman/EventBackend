@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Get all ledger entries (No formatting)
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM ledger ORDER BY createdAt DESC", [], (err, rows) => {
+  db.all("SELECT * FROM ledger ORDER BY createdAt ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 // get ledger by id where amountCredit is not 0
 router.get("/credit/:id", (req, res) => {
   const { id } = req.params;
-  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND amountCredit > 0 ORDER BY createdAt DESC", [id], (err, rows) => {
+  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND amountCredit > 0 ORDER BY createdAt ASC", [id], (err, rows) => {
     if (err) {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
@@ -30,7 +30,7 @@ router.get("/credit/:id", (req, res) => {
 // get ledger where amountDebit is not 0
 router.get("/debit/:id", (req, res) => {
   const { id } = req.params;
-  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND amountDebit > 0 ORDER BY createdAt DESC", [id], (err, rows) => {
+  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND amountDebit > 0 ORDER BY createdAt ASC", [id], (err, rows) => {
     if (err) {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
@@ -55,7 +55,7 @@ router.get("/ledger/:id", (req, res) => {
   });
 });
 
-// Get all ledger entries for a specific vendor (ordered by createdAt DESC)
+// Get all ledger entries for a specific vendor (ordered by createdAt ASC)
 // (`http://localhost:3000/ledger/${id}?startDate=${startDate}&endDate=${endDate}&vendorName=${vendorName}`);
 router.get("/:vendor_id", (req, res) => {
   const { vendor_id } = req.params;
@@ -63,7 +63,7 @@ router.get("/:vendor_id", (req, res) => {
   
   if (startDate && endDate && vendorName) {
     db.all(
-      `SELECT * FROM ledger WHERE vendor_id = ? AND createdAt BETWEEN ? AND ? AND name = ? ORDER BY createdAt DESC`,
+      `SELECT * FROM ledger WHERE vendor_id = ? AND createdAt BETWEEN ? AND ? AND name = ? ORDER BY createdAt ASC`,
       [vendor_id, startDate, endDate, vendorName],
       (err, rows) => {
         if (err) {
@@ -76,7 +76,7 @@ router.get("/:vendor_id", (req, res) => {
     );
   } else if (startDate && endDate) {
     db.all(
-      `SELECT * FROM ledger WHERE vendor_id = ? AND createdAt BETWEEN ? AND ? ORDER BY createdAt DESC`,
+      `SELECT * FROM ledger WHERE vendor_id = ? AND createdAt BETWEEN ? AND ? ORDER BY createdAt ASC`,
       [vendor_id, startDate, endDate],
       (err, rows) => {
         if (err) {
@@ -90,7 +90,7 @@ router.get("/:vendor_id", (req, res) => {
   }
   else if (vendorName) {
     db.all(
-      `SELECT * FROM ledger WHERE vendor_id = ? AND name = ? ORDER BY createdAt DESC`,
+      `SELECT * FROM ledger WHERE vendor_id = ? AND name = ? ORDER BY createdAt ASC`,
       [vendor_id, vendorName],
       (err, rows) => {
         if (err) {
@@ -103,7 +103,7 @@ router.get("/:vendor_id", (req, res) => {
     );
   }
   else {
-    db.all("SELECT * FROM ledger WHERE vendor_id = ? ORDER BY createdAt DESC", [vendor_id], (err, rows) => {
+    db.all("SELECT * FROM ledger WHERE vendor_id = ? ORDER BY createdAt ASC", [vendor_id], (err, rows) => {
       if (err) {
         console.error("Error fetching ledger entries:", err.message);
         res.status(500).json({ error: err.message });

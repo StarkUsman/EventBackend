@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
 
 // Get all users
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM users ORDER BY id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM users ORDER BY id ASC", [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     const usersWithoutPassword = rows.map(({ password, ...user }) => user);
     res.json({ data: usersWithoutPassword, totalData: rows.length });

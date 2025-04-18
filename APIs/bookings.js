@@ -5,7 +5,7 @@ const convertDate = require("../utils/dateConverter");
 
 // Get all bookings
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM bookings ORDER BY booking_id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM bookings ORDER BY booking_id ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching bookings:", err.message);
       res.status(500).json({ error: err.message });
@@ -24,7 +24,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/formatted", (req, res) => {
-  db.all("SELECT * FROM bookings ORDER BY booking_id DESC", [], (err, rows) => {
+  db.all("SELECT * FROM bookings ORDER BY booking_id ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);
       res.status(500).json({ error: err.message });

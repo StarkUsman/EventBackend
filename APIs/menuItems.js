@@ -26,7 +26,7 @@ router.get("/formatted", (req, res) => {
       category, 
       createdAt, 
       updatedAt 
-    FROM menuItems ORDER BY menu_item_id DESC`, 
+    FROM menuItems ORDER BY menu_item_id ASC`, 
     [], 
     (err, rows) => {
       if (err) {

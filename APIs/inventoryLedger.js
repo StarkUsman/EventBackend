@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Get all ledger entries
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM inventoryLedger ORDER BY createdAt DESC", [], (err, rows) => {
+  db.all("SELECT * FROM inventoryLedger ORDER BY createdAt ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
 // get ledger by id where stockIn is not 0
 router.get("/stockIn/:id", (req, res) => {
   const { id } = req.params;
-  db.all("SELECT * FROM inventoryLedger WHERE product_id = ? AND stockIn > 0 ORDER BY createdAt DESC", [id], (err, rows) => {
+  db.all("SELECT * FROM inventoryLedger WHERE product_id = ? AND stockIn > 0 ORDER BY createdAt ASC", [id], (err, rows) => {
     if (err) {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
@@ -40,7 +40,7 @@ router.get("/stockIn/:id", (req, res) => {
 // get ledger where stockOut is not 0
 router.get("/stockOut/:id", (req, res) => {
   const { id } = req.params;
-  db.all("SELECT * FROM inventoryLedger WHERE product_id = ? AND stockOut > 0 ORDER BY createdAt DESC", [id], (err, rows) => {
+  db.all("SELECT * FROM inventoryLedger WHERE product_id = ? AND stockOut > 0 ORDER BY createdAt ASC", [id], (err, rows) => {
     if (err) {
       console.error("Error fetching ledger entries:", err.message);
       res.status(500).json({ error: err.message });
@@ -78,7 +78,7 @@ router.get("/:product_id", (req, res) => {
   
   if (startDate && endDate && name) {
     db.all(
-      `SELECT * FROM inventoryLedger WHERE product_id = ? AND createdAt BETWEEN ? AND ? AND name = ? ORDER BY createdAt DESC`,
+      `SELECT * FROM inventoryLedger WHERE product_id = ? AND createdAt BETWEEN ? AND ? AND name = ? ORDER BY createdAt ASC`,
       [product_id, startDate, endDate, name],
       (err, rows) => {
         if (err) {
@@ -96,7 +96,7 @@ router.get("/:product_id", (req, res) => {
     );
   } else if (startDate && endDate) {
     db.all(
-      `SELECT * FROM inventoryLedger WHERE product_id = ? AND createdAt BETWEEN ? AND ? ORDER BY createdAt DESC`,
+      `SELECT * FROM inventoryLedger WHERE product_id = ? AND createdAt BETWEEN ? AND ? ORDER BY createdAt ASC`,
       [product_id, startDate, endDate],
       (err, rows) => {
         if (err) {
@@ -115,7 +115,7 @@ router.get("/:product_id", (req, res) => {
   }
   else if (name) {
     db.all(
-      `SELECT * FROM inventoryLedger WHERE product_id = ? AND name = ? ORDER BY createdAt DESC`,
+      `SELECT * FROM inventoryLedger WHERE product_id = ? AND name = ? ORDER BY createdAt ASC`,
       [product_id, name],
       (err, rows) => {
         if (err) {
@@ -133,7 +133,7 @@ router.get("/:product_id", (req, res) => {
     );
   }
   else {
-    db.all("SELECT * FROM inventoryLedger WHERE product_id = ? ORDER BY createdAt DESC", [product_id], (err, rows) => {
+    db.all("SELECT * FROM inventoryLedger WHERE product_id = ? ORDER BY createdAt ASC", [product_id], (err, rows) => {
       if (err) {
         console.error("Error fetching ledger entries:", err.message);
         res.status(500).json({ error: err.message });
@@ -170,7 +170,7 @@ router.post("/", (req, res) => {
     // ESV = EXPENSE STOCK VOUCHER
     if (name === "PSV") {
       quantity += stockIn;
-    } else if (name === "ESV") {
+    } else if (name === "ESV" || name === "PRV") {
       quantity -= stockOut;
     }
 

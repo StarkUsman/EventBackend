@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
       p.purchasePrice AS purchase
     FROM product p
     LEFT JOIN units u ON p.unit = u.unit_id
-    ORDER BY p.id DESC
+    ORDER BY p.id ASC
   `;
 
   db.all(query, [], (err, rows) => {

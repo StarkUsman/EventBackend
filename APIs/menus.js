@@ -26,7 +26,7 @@ const stringToArray = (string) => {
 // Get all menus
 router.get("/", async (req, res) => {
   try {
-    db.all("SELECT * FROM menus ORDER BY menu_id DESC", (err, rows) => {
+    db.all("SELECT * FROM menus ORDER BY menu_id ASC", (err, rows) => {
       if (err) {
         logError("Error fetching menus:", err.message);
         return res.status(500).json({ error: err.message });

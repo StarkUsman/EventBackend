@@ -12,7 +12,7 @@ const safeParseJSON = (data) => {
 };
 
 router.post("/", (req, res) => {
-  const { trans_id, date, amount, creditAccount, debitAccount, notes, voucher, checkNumber } = req.body;
+  const { trans_id, date, amount, creditAccount, debitAccount, notes, voucher, checkNumber, img } = req.body;
 
   if (!trans_id || !date || !amount || !creditAccount || !debitAccount || !voucher) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -78,13 +78,13 @@ db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [debitAccount.id], (er
   });
 
   const query = `
-    INSERT INTO transactions (trans_id, date, amount, creditAccount, debitAccount, notes, voucher, checkNumber)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO transactions (trans_id, date, amount, creditAccount, debitAccount, notes, voucher, checkNumber, img)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.run(
     query,
-    [trans_id, date, amount, JSON.stringify(creditAccount), JSON.stringify(debitAccount), notes, voucher, checkNumber],
+    [trans_id, date, amount, JSON.stringify(creditAccount), JSON.stringify(debitAccount), notes, voucher, checkNumber, img],
     function (err) {
       if (err) {
         console.error("Error creating transaction:", err.message);
@@ -96,7 +96,7 @@ db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [debitAccount.id], (er
 });
  
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM transactions ORDER BY date DESC", [], (err, rows) => {
+  db.all("SELECT * FROM transactions ORDER BY date ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching transactions:", err.message);
       return res.status(500).json({ error: err.message });
@@ -114,7 +114,8 @@ router.get("/", (req, res) => {
       debitAccount: safeParseJSON(row.debitAccount),
       notes: row.notes,
       voucher: row.voucher,
-      checkNumber: row.checkNumber
+      checkNumber: row.checkNumber,
+      img: row.img
     }));
 
     res.json({
@@ -146,7 +147,8 @@ router.get("/:id", (req, res) => {
       debitAccount: safeParseJSON(row.debitAccount),
       notes: row.notes,
       voucher: row.voucher,
-      checkNumber: row.checkNumber
+      checkNumber: row.checkNumber,
+      img: row.img
     });
   });
 });

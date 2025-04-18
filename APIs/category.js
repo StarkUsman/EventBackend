@@ -4,7 +4,7 @@ const db = require("../models/database");
 
 // 🚀 Get all categories
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM category ORDER BY id desc", [], (err, rows) => {
+  db.all("SELECT * FROM category ORDER BY id ASC", [], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

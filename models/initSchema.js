@@ -120,6 +120,14 @@ const initDatabase = () => {
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       );`,
 
+    `CREATE TABLE IF NOT EXISTS salaries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        vendor JSON NOT NULL,
+        menuItems JSON,
+        amount REAL DEFAULT 0,
+        variableAmount REAL DEFAULT 0
+      );`,
+
     `CREATE TABLE IF NOT EXISTS ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -233,7 +241,8 @@ const initDatabase = () => {
       debitAccount JSON NOT NULL,
       notes TEXT,
       voucher TEXT NOT NULL,
-      checkNumber TEXT
+      checkNumber TEXT,
+      img TEXT
     )`,
 
     `CREATE TABLE IF NOT EXISTS inventoryLedger (
