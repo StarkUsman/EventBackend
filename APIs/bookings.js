@@ -314,7 +314,7 @@ router.put("/:id", (req, res) => {
     booking_type,
     description,
     date,
-    num_of_persons,
+    number_of_persons,
     additional_services,
     selectedMenu,
     booker_type,
@@ -349,7 +349,7 @@ router.put("/:id", (req, res) => {
       booking_type || null,
       description || null,
       date || null,
-      num_of_persons || 0,
+      number_of_persons || 0,
       JSON.stringify(additional_services) || "[]",
       JSON.stringify(selectedMenu) || "{}",
       booker_type || null,
@@ -425,9 +425,11 @@ router.put("/payment/:id", (req, res) => {
     let payment_received = row.payment_received ? row.payment_received : 0;
     payment_received += paymentToAdd;
 
+    const status = total_remaining <= 0 ? "FULLFILLED" : row.status;
+
     db.run(
-      `UPDATE bookings SET payment_received = ?, total_remaining = ? WHERE booking_id = ?`,
-      [payment_received, total_remaining, id],
+      `UPDATE bookings SET payment_received = ?, total_remaining = ?, status = ? WHERE booking_id = ?`,
+      [payment_received, total_remaining, status, id],
       function (err) {
         if (err) {
           console.error(`Error updating booking payment with ID ${id}:`, err.message);

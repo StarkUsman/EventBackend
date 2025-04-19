@@ -1,11 +1,9 @@
 const db = require("./database");
 
-
-//delete table Acategory
-db.run("DROP TABLE IF EXISTS vendors", [], (err) => {
-    if (err) {
-        console.error("Error dropping table:", err.message);
+db.run(`ALTER TABLE transactions ADD COLUMN img TEXT`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) {
+      console.error("Failed to add 'img' column:", err.message);
     } else {
-        console.log("Table Acategory dropped successfully.");
+      console.log("'img' column added or already exists.");
     }
-});
+  });

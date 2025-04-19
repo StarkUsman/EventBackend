@@ -99,8 +99,8 @@ function getPctTotalPeopleServedLastMonth(total_people_served) {
       db.get(
         `SELECT SUM(number_of_persons) AS total_people_served_last_month 
          FROM bookings 
-         WHERE slot_day >= date('now', 'start of month', '-1 month') 
-           AND slot_day < date('now', 'start of month')`,
+         WHERE dashboardDate >= date('now', 'start of month', '-1 month') 
+           AND dashboardDate < date('now', 'start of month')`,
         [],
         (err, row) => {
           if (err) reject(err);
@@ -116,8 +116,8 @@ function getPctPeopleToBeServedLastMonth(people_to_be_served) {
       db.get(
         `SELECT SUM(number_of_persons) AS people_to_be_served_last_month 
          FROM bookings 
-         WHERE slot_day >= date('now', '-1 month') 
-           AND slot_day < date('now', 'start of month')`,
+         WHERE dashboardDate >= date('now', '-1 month') 
+           AND dashboardDate < date('now', 'start of month')`,
         [],
         (err, row) => {
           if (err) reject(err);
@@ -133,8 +133,8 @@ function getPctReservationsLastMonth(reservations_this_month) {
       db.get(
         `SELECT COUNT(*) AS reservations_last_month 
          FROM bookings 
-         WHERE slot_day >= date('now', 'start of month', '-1 month') 
-           AND slot_day < date('now', 'start of month')`,
+         WHERE dashboardDate >= date('now', 'start of month', '-1 month') 
+           AND dashboardDate < date('now', 'start of month')`,
         [],
         (err, row) => {
           if (err) reject(err);

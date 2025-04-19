@@ -15,6 +15,17 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/formatted", (req, res) => {
+  db.all("SELECT * FROM additionalServices", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching additional services:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ data: rows, totalData: rows.length});
+    }
+  });
+});
+
 // Get a specific additional service
 router.get("/:id", (req, res) => {
   const { id } = req.params;
