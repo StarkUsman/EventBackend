@@ -7,3 +7,6 @@ db.run(`ALTER TABLE transactions ADD COLUMN img TEXT`, (err) => {
       console.log("'img' column added or already exists.");
     }
   });
+
+
+  //      item_name TEXT NOT NULL UNIQUE,

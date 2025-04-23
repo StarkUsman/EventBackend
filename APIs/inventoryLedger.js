@@ -166,11 +166,11 @@ router.post("/", (req, res) => {
     }
 
     let quantity = row ? row.quantity : 0;
-    // PSV = PURCHASE STOCK VOUCHER
-    // ESV = EXPENSE STOCK VOUCHER
-    if (name === "PSV") {
+    // SIV = STOCK IN VOUCHER
+    // SOV = STOCK OUT VOUCHER
+    if (name === "SIV") {
       quantity += stockIn;
-    } else if (name === "ESV" || name === "PRV") {
+    } else if (name === "SOV" || name === "PRV") {
       quantity -= stockOut;
     }
 
@@ -200,6 +200,119 @@ router.post("/", (req, res) => {
 });
 
 // Update a ledger entry
+
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, purchasePrice, user, voucher, product_id, stockOut, stockIn } = req.body;
+
+  if (!name || !purchasePrice || !voucher || !product_id || (!stockOut && !stockIn)) {
+    console.log("All fields are required.");
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  db.get("SELECT quantity FROM product WHERE id = ?", [product_id], (err, row) => {
+    if (err) {
+      console.error("Error fetching product balance:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+    // SIV = STOCK IN VOUCHER
+    // SOV = STOCK OUT VOUCHER
+    // get old ledger entry
+    db.get("SELECT * FROM inventoryLedger WHERE id = ?", [id], (err, oldRow) => {
+      if (err) {
+        console.error("Error fetching old ledger entry:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      let quantity = row ? row.quantity : 0;
+      if (oldRow) {
+        if (oldRow.name === "SIV") {
+          quantity -= oldRow.stockIn;
+        } else if (oldRow.name === "SOV" || oldRow.name === "PRV") {
+          quantity += oldRow.stockOut;
+        }
+      }
+
+      if (name === "SIV") {
+        quantity += stockIn;
+      } else if (name === "SOV" || name === "PRV") {
+        quantity -= stockOut;
+      }
+
+      db.run(
+        `UPDATE inventoryLedger SET name = ?, user = ?, purchasePrice = ?, voucher = ?, product_id = ?, stockOut = ?, stockIn = ?, quantity = ? WHERE id = ?`,
+        [name, JSON.stringify(user) || '{}', purchasePrice, voucher, product_id, stockOut, stockIn, quantity, id],
+        function (err) {
+          if (err) {
+            console.error("Error updating inventoryLedger entry:", err.message);
+            return res.status(500).json({ error: err.message });
+          }
+
+          // Now update product quantity
+          db.run("UPDATE product SET quantity = ? WHERE id = ?", [quantity, product_id], function (err) {
+            if (err) {
+              console.error("Error updating inventoryLedger quantity:", err.message);
+            }
+          });
+
+          res.status(200).json({ message: "Ledger entry updated successfully." });
+        }
+      );
+    });
+
+  },);
+
+});
+
+// get ledger by product id and name
+router.get("/:id/purch/:purch_id", (req, res) => {
+  const { id, purch_id } = req.params;
+  db.all("SELECT * FROM inventoryLedger WHERE product_id = ? AND name = ? AND voucher = ?", [id, 'SIV', purch_id], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      // res.json({ data: rows, totalData: rows.length });
+      const formattedResponse = rows.map((row) => ({
+          ...row,
+          user: JSON.parse(row.user || '{}'),
+        }));
+      res.json({ ledger: formattedResponse });
+    }
+  });
+});
+
+router.get("/:id/pret/:purch_id", (req, res) => {
+  const { id, purch_id } = req.params;
+  db.all("SELECT * FROM inventoryLedger WHERE product_id = ? AND name = ? AND voucher = ?", [id, 'PRV', purch_id], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      const formattedResponse = rows.map((row) => ({
+          ...row,
+          user: JSON.parse(row.user || '{}'),
+        }));
+      res.json({ ledger: formattedResponse });
+    }
+  });
+});
+
+router.get("/:id/expense/:purch_id", (req, res) => {
+  const { id, purch_id } = req.params;
+  db.all("SELECT * FROM inventoryLedger WHERE product_id = ? AND name = ? AND voucher = ?", [id, 'SOV', purch_id], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      const formattedResponse = rows.map((row) => ({
+          ...row,
+          user: JSON.parse(row.user || '{}'),
+        }));
+      res.json({ ledger: formattedResponse });
+    }
+  });
+});
 
 // Delete a ledger entry
 router.delete("/:id", (req, res) => {

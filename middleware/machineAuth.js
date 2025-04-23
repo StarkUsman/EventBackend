@@ -64,7 +64,7 @@
 
 module.exports = function machineAuth(req, res, next) {
   const now = new Date();
-  const licenseExpiry = new Date('2025-04-25T23:59:59Z');
+  const licenseExpiry = new Date('2025-05-25T23:59:59Z');
 
   if (now <= licenseExpiry) {
     return next(); // Allow request

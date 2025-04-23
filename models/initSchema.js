@@ -44,7 +44,7 @@ const initDatabase = () => {
 
     `CREATE TABLE IF NOT EXISTS menuItems (
       menu_item_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      item_name TEXT NOT NULL,
+      item_name TEXT NOT NULL UNIQUE,
       item_name_urdu TEXT,
       description TEXT,
       price REAL,

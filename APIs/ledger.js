@@ -122,7 +122,7 @@ router.post("/", (req, res) => {
   }
 
   // Ensure name is one of the allowed values
-  const allowedNames = ["SRV", "CPV", "BPV", "GV", "OB", "PRV"];
+  const allowedNames = ["SRV", "CPV", "BPV", "GV", "OB", "PRV", "EV"];
   if (!allowedNames.includes(name)) {
     return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV, PRV" });
   }
@@ -178,9 +178,9 @@ router.put("/:id", (req, res) => {
   }
 
   // Ensure name is one of the allowed values
-  const allowedNames = ["SRV", "CPV", "BPV", "GV", "ER"];
+  const allowedNames = ["SRV", "CPV", "BPV", "GV", "ER", "PRV", "EV"];
   if (!allowedNames.includes(name)) {
-    return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV." });
+    return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV, PRV." });
   }
 
   // Fetch vendor balance and proceed only after getting the result
@@ -193,38 +193,93 @@ router.put("/:id", (req, res) => {
     let balance = row ? row.balance : 0; // Ensure balance is initialized correctly
 
     // Update balance based on transaction type
-    let updatedName = name;
-    if (name === "SRV") {
-      balance -= amountDebit;
-    } else if (name === "ER") {
-      balance += amountDebit;
-      updatedName = "SRV";
-    } else {
-      balance += amountCredit;
-    }
+    //SRV = STOCK RECEIVED VOUCHER means debited
+    //PRV = PURCHASE RETURN VOUCHER means credited
 
-    // Update ledger **inside** the callback to ensure correct balance usage
-    db.run(
-      `UPDATE ledger SET name = ?, purch_id = ?, vendor_id = ?, amountDebit = ?, amountCredit = ?, balance = ? WHERE id = ?`,
-      [updatedName, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance, id],
-      function (err) {
-        if (err) {
-          console.error("Error updating ledger entry:", err.message);
-          return res.status(500).json({ error: err.message });
+    db.get("SELECT * FROM ledger WHERE id = ?", [id], (err, oldRow) => {
+      if (err) {
+        console.error("Error fetching old ledger entry:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      if (oldRow) {
+        // Adjust balance based on the old values
+        if (oldRow.name === "SRV") {
+          balance += oldRow.amountDebit;
+        } else if (oldRow.name === "PRV" || oldRow.name === "EV") {
+          balance -= oldRow.amountCredit;
         }
 
-        // Now update vendor balance
-        db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, vendor_id], function (err) {
-          if (err) {
-            console.error("Error updating vendor balance:", err.message);
-          }
-        });
+        // Adjust balance based on the new values
+        if (name === "SRV") {
+          balance -= amountDebit;
+        } else if (name === "PRV" || name === "EV") {
+          balance += amountCredit;
+        }
 
-        res.json({ message: "Ledger entry updated successfully" });
+        // Update the ledger entry
+        db.run(
+          `UPDATE ledger SET name = ?, purch_id = ?, vendor_id = ?, amountDebit = ?, amountCredit = ?, balance = ? WHERE id = ?`,
+          [name, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance, id],
+          function (err) {
+            if (err) {
+              console.error("Error updating ledger entry:", err.message);
+              return res.status(500).json({ error: err.message });
+            }
+
+            // Now update vendor balance
+            db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, vendor_id], function (err) {
+              if (err) {
+                console.error("Error updating vendor balance:", err.message);
+              }
+            });
+
+            res.json({ message: "Ledger entry updated successfully." });
+          }
+        );
+      } else {
+        res.status(404).json({ message: "Ledger entry not found" });
       }
-    );
-  },);
+    });
 });
+});
+
+router.get("/:id/purch/:purch_id", (req, res) => {
+  const { id, purch_id } = req.params;
+  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND name = ? AND purch_id = ? ORDER BY createdAt ASC", [id, 'SRV', purch_id], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ ledger: rows });
+    }
+  });
+});
+
+router.get("/:id/pret/:purch_id", (req, res) => {
+  const { id, purch_id } = req.params;
+  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND name = ? AND purch_id = ? ORDER BY createdAt ASC", [id, 'PRV', purch_id], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ ledger: rows });
+    }
+  });
+});
+
+router.get("/:id/expense/:purch_id", (req, res) => {
+  const { id, purch_id } = req.params;
+  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND name = ? AND purch_id = ? ORDER BY createdAt ASC", [id, 'EV', purch_id], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ ledger: rows });
+    }
+  });
+});
+
 
 // Delete a ledger entry
 router.delete("/:id", (req, res) => {

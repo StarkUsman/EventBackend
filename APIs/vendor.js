@@ -124,6 +124,24 @@ router.get("/:id", (req, res) => {
   });
 });
 
+router.get("/name/:name", (req, res) => {
+  const { name } = req.params;
+  db.get("SELECT * FROM vendors WHERE name = ?", [name], (err, row) => {
+    if (err) {
+      console.error(`Error fetching vendor with name ${name}:`, err.message);
+      res.status(500).json({ error: err.message });
+    } else if (row) {
+      const formattedResponse = {
+        ...row,
+        category: JSON.parse(row.category || '{}'),
+      }
+      res.json(formattedResponse);
+    } else {
+      res.status(404).json({ message: "Vendor with given name not found" });
+    }
+  });
+});
+
 // Create a new vendor
 router.post("/", (req, res) => {
   const { name, name_urdu, email, phone, balance, category, subcategory } = req.body;
