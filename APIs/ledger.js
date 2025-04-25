@@ -121,10 +121,9 @@ router.post("/", (req, res) => {
     return res.status(400).json({ error: "All fields are required." });
   }
 
-  // Ensure name is one of the allowed values
-  const allowedNames = ["SRV", "CPV", "BPV", "GV", "OB", "PRV", "EV"];
-  if (!allowedNames.includes(name)) {
-    return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV, PRV" });
+  // Ensure name is not empty
+  if (name.trim() === "") {
+    return res.status(400).json({ error: "Name cannot be empty." });
   }
 
   // Fetch vendor balance and proceed only after getting the result
@@ -141,7 +140,7 @@ router.post("/", (req, res) => {
     } else if (name === "SRV") {
       balance -= amountDebit;
     } else {
-      balance += amountCredit;
+      balance = amountCredit != 0 ? balance + amountCredit : balance - amountDebit;
     }
 
     // Insert into ledger **inside** the callback to ensure correct balance usage
@@ -177,11 +176,6 @@ router.put("/:id", (req, res) => {
     return res.status(400).json({ error: "All fields are required." });
   }
 
-  // Ensure name is one of the allowed values
-  const allowedNames = ["SRV", "CPV", "BPV", "GV", "ER", "PRV", "EV"];
-  if (!allowedNames.includes(name)) {
-    return res.status(400).json({ error: "Invalid name. Must be one of SRV, CPV, BPV, GV, PRV." });
-  }
 
   // Fetch vendor balance and proceed only after getting the result
   db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [vendor_id], (err, row) => {
@@ -208,6 +202,8 @@ router.put("/:id", (req, res) => {
           balance += oldRow.amountDebit;
         } else if (oldRow.name === "PRV" || oldRow.name === "EV") {
           balance -= oldRow.amountCredit;
+        } else {
+          balance = amountCredit != 0 ? balance - oldRow.amountCredit : balance + oldRow.amountDebit;
         }
 
         // Adjust balance based on the new values
@@ -215,6 +211,8 @@ router.put("/:id", (req, res) => {
           balance -= amountDebit;
         } else if (name === "PRV" || name === "EV") {
           balance += amountCredit;
+        } else {
+          balance = amountCredit != 0 ? balance + amountCredit : balance - amountDebit;
         }
 
         // Update the ledger entry

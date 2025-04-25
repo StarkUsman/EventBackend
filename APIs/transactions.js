@@ -18,65 +18,6 @@ router.post("/", (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  //   add ledger to respective account
-  //debit ledger
-db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [debitAccount.id], (err, row) => {
-    if (err) {
-      console.error("Error fetching vendor balance:", err.message);
-      return res.status(500).json({ error: err.message });
-    }
-
-    let balance = row ? row.balance : 0;
-    balance -= amount;
-
-    db.run(
-      `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [voucher, trans_id, debitAccount.id, amount || 0, 0, balance],
-      function (err) {
-        if (err) {
-          console.error("Error creating ledger entry:", err.message);
-          return res.status(500).json({ error: err.message });
-        }
-
-        // Now update vendor balance
-        db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, debitAccount.id], function (err) {
-          if (err) {
-            console.error("Error updating vendor balance:", err.message);
-          }
-        });
-      }
-    );
-  });
-
-  // credit ledger
-  db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [creditAccount.id], (err, row) => {
-    if (err) {
-      console.error("Error fetching vendor balance:", err.message);
-    }
-
-    let balance = row ? row.balance : 0;
-    balance += amount;
-
-    db.run(
-      `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [voucher, trans_id, creditAccount.id, 0, amount || 0, balance],
-      function (err) {
-        if (err) {
-          console.error("Error creating ledger entry:", err.message);
-        }
-
-        // Now update vendor balance
-        db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, creditAccount.id], function (err) {
-          if (err) {
-            console.error("Error updating vendor balance:", err.message);
-          }
-        });
-      }
-    );
-  });
-
   const query = `
     INSERT INTO transactions (trans_id, date, amount, creditAccount, debitAccount, notes, voucher, checkNumber, img)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
