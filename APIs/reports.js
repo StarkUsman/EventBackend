@@ -21,7 +21,7 @@ router.get("/EXPENSE", (req, res) => {
             : [];
 
         const filteredRows = formattedRows.filter(row => {
-            const isExpense = row.category?.category.toLowerCase() === "expense";
+            const isExpense = row.category?.category?.toLowerCase() === "expense";
             const matchesSubcategory = subcategories.length === 0 || subcategories.includes(row.subcategory?.toLowerCase());
             return isExpense && matchesSubcategory;
         });

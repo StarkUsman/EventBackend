@@ -105,7 +105,16 @@ const initDatabase = () => {
       advance INTEGER,
       total_remaining INTEGER,
       payment_received INTEGER DEFAULT 0,
-      dashboardDate TEXT
+      dashboardDate TEXT,
+      user JSON
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS bookingLedger (
+      booking_id INTEGER NOT NULL,
+      user TEXT,
+      amount REAL,
+      account TEXT,
+      date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );`,
 
     `CREATE TABLE IF NOT EXISTS vendors (

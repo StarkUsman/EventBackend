@@ -16,7 +16,8 @@ router.get("/", (req, res) => {
         additional_services: JSON.parse(row.additional_services),
         selectedMenu: JSON.parse(row.selectedMenu),
         SLOT: JSON.parse(row.SLOT),
-        date: row.date.split('T')[0]
+        date: row.date.split('T')[0],
+        user: JSON.parse(row.user)
       }));
       res.json(formattedResponse);
     }
@@ -42,7 +43,8 @@ router.get("/formatted", (req, res) => {
         sNo: index + 1,
         ...row,
         SLOT: safeParseJSON(row.SLOT),
-        date: row.date.split('T')[0]
+        date: row.date.split('T')[0],
+        user: safeParseJSON(row.user)
       }));
 
       res.json({
@@ -78,7 +80,8 @@ router.get("/upcoming", (req, res) => {
       const formattedResponse = rows.map((row, index) => ({
         sNo: index + 1, // Serial number
         ...row,
-        SLOT: safeParseJSON(row.SLOT)
+        SLOT: safeParseJSON(row.SLOT),
+        user: safeParseJSON(row.user),
       }));
 
       res.json({
@@ -110,7 +113,10 @@ router.get("/:id", (req, res) => {
       // res.json(row);
       const formattedResponse = {
         ...row,
-        SLOT: safeParseJSON(row.SLOT) // Ensure SLOT is properly parsed
+        SLOT: safeParseJSON(row.SLOT), // Ensure SLOT is properly parsed
+        user: safeParseJSON(row.user), // Ensure user is properly parsed  
+        selectedMenu: safeParseJSON(row.selectedMenu),
+        additional_services: safeParseJSON(row.additional_services),
       };
       res.json(formattedResponse);
     } else {
@@ -144,7 +150,8 @@ router.post("/", (req, res) => {
     SLOT,
     advance = 0,
     total_remaining = 0,
-    payment_received = 0
+    payment_received = 0,
+    user
   } = req.body;
 
   const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
@@ -154,8 +161,8 @@ router.post("/", (req, res) => {
       (reservation_name, contact_number, alt_contact_number, booking_type, description, date, number_of_persons, 
        additional_services, selectedMenu, booker_type, status, additionalPrice, discount, notes, add_service_ids, 
        menu_items_ids, total_menu_price, grandTotal, total_price, SLOT, advance, total_remaining, 
-       payment_received, dashboardDate) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       payment_received, dashboardDate, user) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     
     [
       reservation_name || null,
@@ -181,7 +188,8 @@ router.post("/", (req, res) => {
       advance,
       total_remaining,
       payment_received,
-      dashboardDate
+      dashboardDate,
+      JSON.stringify(user) || "{}"
     ],
 
     function (err) {
@@ -411,7 +419,7 @@ router.put("/payment/:id", (req, res) => {
 
   console.log("req.body", req.body);
 
-  const { paymentToAdd, account_id } = req.body;
+  const { paymentToAdd } = req.body;
 
   db.get(`SELECT * FROM bookings WHERE booking_id = ?`, [id], (err, row) => {
     if (err) {
@@ -441,40 +449,7 @@ router.put("/payment/:id", (req, res) => {
         }
       }
     );
-
-    db.get("SELECT balance FROM vendors WHERE vendor_id = ?", [account_id], (err, row) => {
-      if (err) {
-        console.error("Error fetching vendor balance:", err.message);
-        return res.status(500).json({ error: err.message });
-      }
-  
-      let balance = row ? row.balance : 0;
-      balance += paymentToAdd;
-      let ledgerName = "RPV";
-      let amountCredit = paymentToAdd;
-      let amountDebit = 0;
-      let purch_id = id;
-  
-      db.run(
-        `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [ledgerName, purch_id, account_id, amountDebit || 0, amountCredit || 0, balance],
-        function (err) {
-          if (err) {
-            console.error("Error creating ledger entry:", err.message);
-            return res.status(500).json({ error: err.message });
-          }
-  
-          db.run("UPDATE vendors SET balance = ? WHERE vendor_id = ?", [balance, account_id], function (err) {
-            if (err) {
-              console.error("Error updating vendor balance:", err.message);
-            }
-          });
-  
-          res.status(201).json({ id: this.lastID });
-        }
-      );
-    });
+    res.status(201).json({ id: this.lastID });
     
   });
 });

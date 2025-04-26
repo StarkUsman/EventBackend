@@ -32,6 +32,7 @@ const transactionRoutes = require("./APIs/transactions");
 const usersRoutes = require("./APIs/users");
 const reportsRoutes = require("./APIs/reports");
 const salaryRoutes = require("./APIs/salary");
+const bookingLedgerRoutes = require("./APIs/bookingLedger");
 
 // Define routes for all tables
 router.use("/halls", hallsRoutes);
@@ -42,6 +43,7 @@ router.use("/menu-items", menuItemsRoutes);
 router.use("/menu-x-items", menuXItemsRoutes);
 router.use("/additional-services", additionalServicesRoutes);
 router.use("/bookings", bookingsRoutes);
+router.use("/bookingledger", bookingLedgerRoutes);
 router.use("/booking-additional-services", bookingAdditionalServicesRoutes);
 router.use("/vendors", vendorsRoutes);
 router.use("/units", unitsRoutes);
