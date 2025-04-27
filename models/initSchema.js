@@ -134,7 +134,8 @@ const initDatabase = () => {
         vendor JSON NOT NULL,
         menuItems JSON,
         amount REAL DEFAULT 0,
-        variableAmount REAL DEFAULT 0
+        variableAmount REAL DEFAULT 0,
+        lastSalaryPaidDate TEXT DEFAULT CURRENT_TIMESTAMP
       );`,
 
     `CREATE TABLE IF NOT EXISTS ledger (
