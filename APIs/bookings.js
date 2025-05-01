@@ -33,7 +33,7 @@ router.get("/all", (req, res) => {
     start: dashboardDate,
   }
   */
-  db.all("SELECT booking_id, reservation_name, dashboardDate, SLOT FROM bookings ORDER BY booking_id ASC", [], (err, rows) => {
+  db.all("SELECT booking_id, reservation_name, dashboardDate, SLOT, status FROM bookings ORDER BY booking_id ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching bookings:", err.message);
       res.status(500).json({ error: err.message });
@@ -44,6 +44,7 @@ router.get("/all", (req, res) => {
         start: row.dashboardDate,
         end: row.dashboardDate,
         time: JSON.parse(row.SLOT).slot,
+        status: row.status,
       }));
       res.json({
         data: formattedResponse,

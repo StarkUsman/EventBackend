@@ -283,6 +283,11 @@ const initDatabase = () => {
       updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
     );`,
 
+    `CREATE TABLE IF NOT EXISTS systemDateTime (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );`,
+
     `CREATE TABLE IF NOT EXISTS settings (
       name TEXT NOT NULL,
       phoneNumber TEXT,

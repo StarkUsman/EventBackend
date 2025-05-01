@@ -1,6 +1,6 @@
 const db = require("./database");
 
-db.run(`ALTER TABLE transactions ADD COLUMN img TEXT`, (err) => {
+db.run(`DROP TABLE IF EXISTS bookings`, (err) => {
     if (err && !err.message.includes("duplicate column name")) {
       console.error("Failed to add 'img' column:", err.message);
     } else {

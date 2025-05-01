@@ -61,14 +61,96 @@
 //   return res.status(403).json({ error: "Access denied: Unauthorized machine" });
 // };
 
+const db = require("../models/database");
 
-module.exports = function machineAuth(req, res, next) {
-  const now = new Date();
-  const licenseExpiry = new Date('2025-05-25T23:59:59Z');
+let cachedRefDate = null;
 
-  if (now <= licenseExpiry) {
-    return next(); // Allow request
+module.exports = async function machineAuth(req, res, next) {
+  try {
+    if (!cachedRefDate) {
+      cachedRefDate = new Date(await getReferenceDate());
+    }
+
+    const now = new Date();
+    const licenseExpiry = new Date("2025-05-25T23:59:59Z");
+
+    // Detect system clock rollback
+    if (now < cachedRefDate) {
+      return res.status(403).json({ error: "System time manipulation detected" });
+    }
+
+    // If refDate is older than 2 days, refresh it
+    const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+    if (now - cachedRefDate >= TWO_DAYS_MS) {
+      cachedRefDate = new Date(await updateReferenceDate());
+    }
+
+    if (cachedRefDate <= licenseExpiry) {
+      return next();
+    }
+
+    return res.status(403).json({ error: "License expired: Access denied" });
+  } catch (err) {
+    console.error("machineAuth error:", err);
+    return res.status(500).json({ error: "Internal server error" });
   }
-
-  return res.status(403).json({ error: "License expired: Access denied" });
 };
+
+async function getReferenceDate() {
+  return new Promise((resolve, reject) => {
+    db.get("SELECT * FROM systemDateTime ORDER BY id DESC LIMIT 1", [], (err, row) => {
+      if (err) return reject(err);
+
+      console.log("Row:", row);
+
+      if (row) return resolve(row.date);
+
+      // Insert the first reference date
+      db.run(
+        `INSERT INTO systemDateTime (date) VALUES (CURRENT_TIMESTAMP)`,
+        [],
+        function (err) {
+          if (err) return reject(err);
+
+          db.get("SELECT * FROM systemDateTime WHERE id = ?", [this.lastID], (err, newRow) => {
+            if (err) return reject(err);
+            resolve(newRow.date);
+          });
+        }
+      );
+    });
+  });
+}
+
+async function updateReferenceDate() {
+  return new Promise((resolve, reject) => {
+    db.run(
+      `INSERT INTO systemDateTime (date) VALUES (CURRENT_TIMESTAMP)`,
+      [],
+      function (err) {
+        if (err) {
+          console.error("Error updating reference date:", err.message);
+          return reject(err);
+        }
+
+        // Clean up: Keep only the latest 5 entries
+        db.run(
+          `DELETE FROM systemDateTime WHERE id NOT IN (SELECT id FROM systemDateTime ORDER BY id DESC LIMIT 5)`,
+          [],
+          (err) => {
+            if (err) {
+              console.error("Error deleting old reference dates:", err.message);
+              return reject(err);
+            }
+
+            // Return newly inserted date
+            db.get("SELECT date FROM systemDateTime WHERE id = ?", [this.lastID], (err, row) => {
+              if (err) return reject(err);
+              resolve(row.date);
+            });
+          }
+        );
+      }
+    );
+  });
+}
