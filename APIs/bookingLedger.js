@@ -4,11 +4,11 @@ const db = require("../models/database");
 
 // CREATE booking ledger entry
 router.post("/", (req, res) => {
-  const { booking_id, user = null, amount = 0, account = null, date = null } = req.body;
+  const { booking_id, user = null, amount = 0, account = null, date = null, ledgerId } = req.body;
 
   db.run(
-    `INSERT INTO bookingLedger (booking_id, user, amount, account, date) VALUES (?, ?, ?, ?, ?)`,
-    [booking_id, user, amount, account, date || new Date().toISOString()],
+    `INSERT INTO bookingLedger (booking_id, user, amount, account, date, ledgerId) VALUES (?, ?, ?, ?, ?, ?)`,
+    [booking_id, user, amount, account, date || new Date().toISOString(), ledgerId],
     function (err) {
       if (err) {
         console.error("Error creating booking ledger entry:", err.message);

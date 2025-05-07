@@ -116,7 +116,7 @@ router.get("/:vendor_id", (req, res) => {
 
 // Create a new ledger entry
 router.post("/", (req, res) => {
-  const { name, purch_id, vendor_id, amountDebit, amountCredit } = req.body;
+  const { name, purch_id, vendor_id, reference, amountDebit, amountCredit } = req.body;
   if (!name || !vendor_id || (amountDebit === undefined && amountCredit === undefined)) {
     return res.status(400).json({ error: "All fields are required." });
   }
@@ -145,9 +145,9 @@ router.post("/", (req, res) => {
 
     // Insert into ledger **inside** the callback to ensure correct balance usage
     db.run(
-      `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance],
+      `INSERT INTO ledger (name, purch_id, vendor_id, amountDebit, amountCredit, balance, reference) 
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [name, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance, reference || null],
       function (err) {
         if (err) {
           console.error("Error creating ledger entry:", err.message);
@@ -170,7 +170,7 @@ router.post("/", (req, res) => {
 // Update a ledger entry
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { name, purch_id, vendor_id, amountDebit, amountCredit } = req.body;
+  const { name, purch_id, vendor_id, amountDebit, amountCredit, reference } = req.body;
 
   if (!name || !vendor_id || (amountDebit === undefined && amountCredit === undefined) || !purch_id) {
     return res.status(400).json({ error: "All fields are required." });
@@ -217,8 +217,8 @@ router.put("/:id", (req, res) => {
 
         // Update the ledger entry
         db.run(
-          `UPDATE ledger SET name = ?, purch_id = ?, vendor_id = ?, amountDebit = ?, amountCredit = ?, balance = ? WHERE id = ?`,
-          [name, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance, id],
+          `UPDATE ledger SET name = ?, purch_id = ?, vendor_id = ?, amountDebit = ?, amountCredit = ?, balance = ?, reference = ? WHERE id = ?`,
+          [name, purch_id, vendor_id, amountDebit || 0, amountCredit || 0, balance, reference || null, id],
           function (err) {
             if (err) {
               console.error("Error updating ledger entry:", err.message);

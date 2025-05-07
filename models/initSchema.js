@@ -114,7 +114,8 @@ const initDatabase = () => {
       user TEXT,
       amount REAL,
       account TEXT,
-      date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      ledgerId INTEGER
     );`,
 
     `CREATE TABLE IF NOT EXISTS vendors (
@@ -146,6 +147,7 @@ const initDatabase = () => {
       amountDebit REAL NOT NULL,
       amountCredit REAL NOT NULL,
       balance REAL NOT NULL,
+      reference TEXT DEFAULT NULL,
       createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (vendor_id) REFERENCES vendors (vendor_id)
     );`,
