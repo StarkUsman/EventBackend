@@ -34,8 +34,6 @@ router.get("/formatted", (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
       }
 
-      console.log("[GET /menu-items/formatted] Fetched formatted menu items successfully.");
-
       const formattedRows = rows.map((row, index) => ({
         sNo: index + 1, // Serial number
         menu_item_id: row.menu_item_id,

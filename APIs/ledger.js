@@ -55,6 +55,19 @@ router.get("/ledger/:id", (req, res) => {
   });
 });
 
+// Get ledger by name
+router.get("/name/:name", (req, res) => {
+  const { name } = req.params;
+  db.all("SELECT * FROM ledger WHERE name = ? ORDER BY createdAt ASC", [name], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ data: rows, totalData: rows.length });
+    }
+  });
+});
+
 // Get all ledger entries for a specific vendor (ordered by createdAt ASC)
 // (`http://localhost:3000/ledger/${id}?startDate=${startDate}&endDate=${endDate}&vendorName=${vendorName}`);
 router.get("/:vendor_id", (req, res) => {

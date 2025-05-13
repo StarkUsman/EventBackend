@@ -43,8 +43,6 @@ router.get("/", (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    console.log("Fetched transactions successfully.");
-
     const formattedResponse = rows.map((row, index) => ({
       sNo: index + 1, // Serial number
       id: row.id,
@@ -61,6 +59,36 @@ router.get("/", (req, res) => {
 
     res.json({
       totalData: formattedResponse.length,
+      data: formattedResponse
+    });
+  });
+});
+
+router.get("/name/:name", (req, res) => {
+  const { name } = req.params;
+
+  db.all("SELECT * FROM transactions ORDER BY date ASC", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching transactions:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    const filteredRows = rows.filter((row) => {
+      const creditAccount = safeParseJSON(row.creditAccount);
+      const debitAccount = safeParseJSON(row.debitAccount);
+      return (
+        (creditAccount && creditAccount.name.toLowerCase().includes(name.toLowerCase())) ||
+        (debitAccount && debitAccount.name.toLowerCase().includes(name.toLowerCase()))
+      );
+    });
+
+    const formattedResponse = filteredRows.map((row, index) => ({
+      ...row,
+      creditAccount: safeParseJSON(row.creditAccount),
+      debitAccount: safeParseJSON(row.debitAccount)
+  }));
+    res.json({
+      totalData: filteredRows.length,
       data: formattedResponse
     });
   });

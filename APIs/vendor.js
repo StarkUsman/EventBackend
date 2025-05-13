@@ -69,6 +69,74 @@ router.get("/category", (req, res) => {
   });
 });
 
+router.get("/foodCategory", (req, res) => {
+  db.all("SELECT * FROM vendors ORDER BY vendor_id ASC", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching vendors:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      let filteredRows = rows.filter((vendor) => {
+        // const category = JSON.parse(vendor.category);
+        return vendor.subcategory && (vendor.subcategory === "FOOD EXPENSE");
+      });
+      const formattedData = filteredRows.map((vendor, index) => ({
+        id: vendor.vendor_id,
+        sNo: index + 1,
+        name: vendor.name,
+        name_urdu: vendor.name_urdu,
+        email: vendor.email,
+        phone: vendor.phone,
+        category: JSON.parse(vendor.category),
+        subcategory: vendor.subcategory,
+        created: new Date(vendor.created_at).toLocaleString("en-US", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+        balance: vendor.balance.toFixed(2),
+      }));
+      res.json({ data: formattedData, totalData: formattedData.length });
+    }
+  });
+});
+
+router.get("/monthlyExpense", (req, res) => {
+  db.all("SELECT * FROM vendors ORDER BY vendor_id ASC", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching vendors:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      let filteredRows = rows.filter((vendor) => {
+        // const category = JSON.parse(vendor.category);
+        return vendor.subcategory && (vendor.subcategory === "MONTHLY EXPENSE");
+      });
+      const formattedData = filteredRows.map((vendor, index) => ({
+        id: vendor.vendor_id,
+        sNo: index + 1,
+        name: vendor.name,
+        name_urdu: vendor.name_urdu,
+        email: vendor.email,
+        phone: vendor.phone,
+        category: JSON.parse(vendor.category),
+        subcategory: vendor.subcategory,
+        created: new Date(vendor.created_at).toLocaleString("en-US", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+        balance: vendor.balance.toFixed(2),
+      }));
+      res.json({ data: formattedData, totalData: formattedData.length });
+    }
+  });
+});
+
 //get all vendors where category is Assets or assets
 router.get("/assets", (req, res) => {
   db.all(`

@@ -10,7 +10,6 @@ router.get("/", (req, res) => {
       console.error("Error fetching bookings:", err.message);
       res.status(500).json({ error: err.message });
     } else {
-      console.log("Fetched bookings successfully.");
       const formattedResponse = rows.map((row) => ({
         ...row,
         additional_services: JSON.parse(row.additional_services),
@@ -74,7 +73,9 @@ router.get("/formatted", (req, res) => {
         ...row,
         SLOT: safeParseJSON(row.SLOT),
         date: row.date.split('T')[0],
-        user: safeParseJSON(row.user)
+        user: safeParseJSON(row.user),
+        additional_services: safeParseJSON(row.additional_services),
+        selectedMenu: safeParseJSON(row.selectedMenu),
       }));
 
       res.json({
@@ -83,6 +84,48 @@ router.get("/formatted", (req, res) => {
       });
     }
   });
+});
+
+router.get("/month/:month", (req, res) => {
+  const { month } = req.params;
+  const startDate = new Date(month);
+  const endDate = new Date(month);
+  endDate.setMonth(endDate.getMonth() + 1);
+  endDate.setDate(0); // Set to the last day of the month
+
+  db.all(
+    "SELECT * FROM bookings WHERE dashboardDate >= ? AND dashboardDate <= ? AND status != 'DRAFTED' ORDER BY dashboardDate ASC",
+    [startDate.toISOString(), endDate.toISOString()],
+    (err, rows) => {
+      if (err) {
+        console.error("Error fetching bookings:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      const safeParseJSON = (data) => {
+        try {
+          return typeof data === "string" ? JSON.parse(data) : data;
+        } catch (e) {
+          console.error("Error parsing SLOT field:", e.message);
+          return data;
+        }
+      };
+
+      const formattedResponse = rows.map((row, index) => ({
+        sNo: index + 1,
+        ...row,
+        SLOT: safeParseJSON(row.SLOT),
+        date: row.date.split('T')[0],
+        user: safeParseJSON(row.user),
+        additional_services: safeParseJSON(row.additional_services),
+        selectedMenu: safeParseJSON(row.selectedMenu),
+      }));
+
+      res.json({
+        totalData: formattedResponse.length,
+        data: formattedResponse
+      });
+    });
 });
 
 router.get("/upcoming", (req, res) => {
@@ -139,7 +182,6 @@ router.get("/:id", (req, res) => {
       console.error(`Error fetching booking with ID ${id}:`, err.message);
       res.status(500).json({ error: err.message });
     } else if (row) {
-      console.log(`Fetched booking with ID ${id} successfully.`);
       // res.json(row);
       const formattedResponse = {
         ...row,
@@ -227,7 +269,6 @@ router.post("/", (req, res) => {
         console.error("Error creating booking:", err);
         res.status(500).json({ error: err.message });
       } else {
-        console.log(`Booking created successfully with ID ${this.lastID}.`);
         let purch_id = this.lastID;
         let response = { id: this.lastID };
         // res.status(201).json({ id: this.lastID });
@@ -337,7 +378,6 @@ router.delete("/:id", (req, res) => {
     } else if (this.changes === 0) {
       res.status(404).json({ message: "Booking not found" });
     } else {
-      console.log(`Booking with ID ${id} deleted successfully.`);
       res.json({ message: "Booking deleted successfully." });
     }
   });
@@ -414,7 +454,6 @@ router.put("/:id", (req, res) => {
       } else if (this.changes === 0) {
         res.status(404).json({ message: "Booking not found" });
       } else {
-        console.log(`Booking with ID ${id} updated successfully.`);
         res.json({ message: "Booking updated successfully." });
       }
     }
@@ -436,7 +475,6 @@ router.put("/status/:id", (req, res) => {
       } else if (this.changes === 0) {
         res.status(404).json({ message: "Booking not found" });
       } else {
-        console.log(`Booking status with ID ${id} updated successfully.`);
         res.json({ message: "Booking status updated successfully." });
       }
     }
@@ -446,8 +484,6 @@ router.put("/status/:id", (req, res) => {
 // Update booking add payment
 router.put("/payment/:id", (req, res) => {
   const { id } = req.params;
-
-  console.log("req.body", req.body);
 
   const { paymentToAdd } = req.body;
 
@@ -475,7 +511,6 @@ router.put("/payment/:id", (req, res) => {
         } else if (this.changes === 0) {
           res.status(404).json({ message: "Booking not found" });
         } else {
-          console.log(`Booking payment with ID ${id} updated successfully.`);
         }
       }
     );
