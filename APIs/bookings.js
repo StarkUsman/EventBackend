@@ -481,6 +481,27 @@ router.put("/status/:id", (req, res) => {
   );
 });
 
+// Update booking status and free the slot
+router.put("/cancel/:id", (req, res) => {
+  const { id } = req.params;
+  const { status, SLOT } = req.body;
+
+  db.run(
+    `UPDATE bookings SET status = ?, SLOT = ? WHERE booking_id = ?`,
+    [status, JSON.stringify(SLOT), id],
+    function (err) {
+      if (err) {
+        console.error(`Error updating booking status with ID ${id}:`, err.message);
+        res.status(500).json({ error: err.message });
+      } else if (this.changes === 0) {
+        res.status(404).json({ message: "Booking not found" });
+      } else {
+        res.json({ message: "Booking status updated successfully." });
+      }
+    }
+  );
+});
+
 // Update booking add payment
 router.put("/payment/:id", (req, res) => {
   const { id } = req.params;
