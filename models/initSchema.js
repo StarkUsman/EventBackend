@@ -302,7 +302,16 @@ const initDatabase = () => {
       zip TEXT,
       logo TEXT,
       icon TEXT,
-      favicon TEXT);`
+      favicon TEXT);`,
+
+    `CREATE TABLE IF NOT EXISTS profitLoss (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      totalIncome REAL NOT NULL,
+      totalExpense REAL NOT NULL,
+      profitLoss REAL NOT NULL,
+      monthName TEXT NOT NULL,
+      date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );`
   ];
 
   queries.forEach((query) => {

@@ -45,8 +45,8 @@ router.get("/:id", (req, res) => {
 // Create a new additional service
 router.post("/", (req, res) => {
   const { additional_service_name, additional_service_name_urdu, description, price, category, isEditable } = req.body;
-  if (!additional_service_name || !price || !category) {
-    return res.status(400).json({ error: "Service name, price, and category are required." });
+  if (!additional_service_name || !price) {
+    return res.status(400).json({ error: "Service name, price are required." });
   }
 
   db.run(

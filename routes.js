@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const machineAuth = require("./middleware/machineAuth")
 
-// router.use(machineAuth);
+router.use(machineAuth);
 
 // Import individual route files for each table
 const hallsRoutes = require("./APIs/halls");
@@ -34,6 +34,7 @@ const reportsRoutes = require("./APIs/reports");
 const salaryRoutes = require("./APIs/salary");
 const bookingLedgerRoutes = require("./APIs/bookingLedger");
 const settingsRoutes = require("./APIs/settings");
+const profitLossRoutes = require("./APIs/profitLoss");
 
 // Define routes for all tables
 router.use("/halls", hallsRoutes);
@@ -65,5 +66,6 @@ router.use("/users", usersRoutes);
 router.use("/reports", reportsRoutes);
 router.use("/salary", salaryRoutes);
 router.use("/settings", settingsRoutes);
+router.use("/profitLoss", profitLossRoutes);
 
 module.exports = router;
