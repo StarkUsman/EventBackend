@@ -49,7 +49,7 @@ router.put("/:id", (req, res) => {
   const { booking_id, user = null, amount = 0, account = null, date = null } = req.body;
 
   db.run(
-    `UPDATE bookingLedger SET booking_id = ?, user = ?, amount = ?, account = ?, date = ? WHERE rowid = ?`,
+    `UPDATE bookingLedger SET booking_id = ?, user = ?, amount = ?, account = ?, date = ? WHERE id = ?`,
     [booking_id, user, amount, account, date || new Date().toISOString(), id],
     function (err) {
       if (err) {
@@ -68,7 +68,7 @@ router.put("/:id", (req, res) => {
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  db.run("DELETE FROM bookingLedger WHERE rowid = ?", [id], function (err) {
+  db.run("DELETE FROM bookingLedger WHERE id = ?", [id], function (err) {
     if (err) {
       console.error("Error deleting booking ledger entry:", err.message);
       return res.status(500).json({ error: err.message });

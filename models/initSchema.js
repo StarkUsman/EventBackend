@@ -110,6 +110,7 @@ const initDatabase = () => {
     );`,
 
     `CREATE TABLE IF NOT EXISTS bookingLedger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       booking_id INTEGER NOT NULL,
       user TEXT,
       amount REAL,

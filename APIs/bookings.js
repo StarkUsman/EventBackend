@@ -520,7 +520,7 @@ router.put("/payment/:id", (req, res) => {
     let payment_received = row.payment_received ? row.payment_received : 0;
     payment_received += paymentToAdd;
 
-    const status = total_remaining <= 0 ? "FULLFILLED" : row.status;
+    const status = total_remaining <= 0 ? "FULLFILLED" : row.status === "FULLFILLED" ? "OPEN" : row.status;
 
     db.run(
       `UPDATE bookings SET payment_received = ?, total_remaining = ?, status = ? WHERE booking_id = ?`,
