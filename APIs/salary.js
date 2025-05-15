@@ -68,7 +68,8 @@ router.get("/calculate", async (req, res) => {
 
       // Filter bookings after lastSalaryPaidDate
       const relevantBookings = bookings.filter(booking => 
-        dayjs(booking.dashboardDate).isAfter(dayjs(lastPaidDate)) && dayjs(booking.dashboardDate).isBefore(dayjs().add(1, 'day'))
+        dayjs(booking.dashboardDate).isAfter(dayjs(lastPaidDate).endOf('day')) &&
+        dayjs(booking.dashboardDate).isBefore(dayjs().add(1, 'day').startOf('day'))
       );
 
       for (const booking of relevantBookings) {

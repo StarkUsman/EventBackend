@@ -226,7 +226,7 @@ router.post("/", (req, res) => {
     user
   } = req.body;
 
-  const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
+  const dashboardDate = SLOT ? convertDate(SLOT[0].date) : null;
 
   db.run(
     `INSERT INTO bookings 
@@ -410,7 +410,7 @@ router.put("/:id", (req, res) => {
     total_remaining = 0,
   } = req.body;
 
-  const dashboardDate = SLOT ? convertDate(SLOT.date) : null;
+  const dashboardDate = SLOT ? convertDate(SLOT[0].date) : null;
 
   db.run(
     `UPDATE bookings SET 
