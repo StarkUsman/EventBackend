@@ -9,7 +9,6 @@ router.get("/", (req, res) => {
       console.error("[GET /menu-items] Error fetching menu items:", err.message);
       return res.status(500).json({ error: "Internal Server Error" });
     }
-    console.log("[GET /menu-items] Fetched menu items successfully.");
     res.json(rows);
   });
 });
@@ -62,7 +61,6 @@ router.get("/:id", (req, res) => {
       console.error(`Error fetching menu item with ID ${id}:`, err.message);
       res.status(500).json({ error: err.message });
     } else if (row) {
-      console.log(`Fetched menu item with ID ${id} successfully.`);
       res.json(row);
     } else {
       res.status(404).json({ message: "Menu item not found" });
@@ -86,7 +84,6 @@ router.post("/", (req, res) => {
         console.error("Error creating menu item:", err.message);
         res.status(500).json({ error: err.message });
       } else {
-        console.log(`Menu item created successfully with ID ${this.lastID}.`);
         res.status(201).json({ id: this.lastID });
       }
     }
@@ -112,7 +109,6 @@ router.put("/:id", (req, res) => {
       } else if (this.changes === 0) {
         res.status(404).json({ message: "Menu item not found" });
       } else {
-        console.log(`Menu item with ID ${id} updated successfully.`);
         res.json({ message: "Menu item updated successfully." });
       }
     }
@@ -129,7 +125,6 @@ router.delete("/:id", (req, res) => {
     } else if (this.changes === 0) {
       res.status(404).json({ message: "Menu item not found" });
     } else {
-      console.log(`Menu item with ID ${id} deleted successfully.`);
       res.json({ message: "Menu item deleted successfully." });
     }
   });

@@ -7,6 +7,7 @@ router.post("/", (req, res) => {
   const {
     name,
     phoneNumber = null,
+    phoneNumber1 = null,
     email = null,
     address1 = null,
     address2 = null,
@@ -20,9 +21,9 @@ router.post("/", (req, res) => {
   } = req.body;
 
   db.run(
-    `INSERT INTO settings (name, phoneNumber, email, address1, address2, country, state, city, zip, logo, icon, favicon) 
+    `INSERT INTO settings (name, phoneNumber, phoneNumber1, email, address1, address2, country, state, city, zip, logo, icon, favicon) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [name, phoneNumber, email, address1, address2, country, state, city, zip, logo, icon, favicon],
+    [name, phoneNumber, phoneNumber1, email, address1, address2, country, state, city, zip, logo, icon, favicon],
     function (err) {
       if (err) {
         console.error("Error creating setting:", err.message);
@@ -66,6 +67,7 @@ router.put("/:id", (req, res) => {
   const {
     name,
     phoneNumber = null,
+    phoneNumber1 = null,
     email = null,
     address1 = null,
     address2 = null,
@@ -80,10 +82,10 @@ router.put("/:id", (req, res) => {
 
   db.run(
     `UPDATE settings SET 
-      name = ?, phoneNumber = ?, email = ?, address1 = ?, address2 = ?, country = ?, 
+      name = ?, phoneNumber = ?, phoneNumber1 = ?, email = ?, address1 = ?, address2 = ?, country = ?, 
       state = ?, city = ?, zip = ?, logo = ?, icon = ?, favicon = ? 
      WHERE rowid = ?`,
-    [name, phoneNumber, email, address1, address2, country, state, city, zip, logo, icon, favicon, id],
+    [name, phoneNumber, phoneNumber1, email, address1, address2, country, state, city, zip, logo, icon, favicon, id],
     function (err) {
       if (err) {
         console.error("Error updating setting:", err.message);

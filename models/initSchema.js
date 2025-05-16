@@ -294,6 +294,7 @@ const initDatabase = () => {
     `CREATE TABLE IF NOT EXISTS settings (
       name TEXT NOT NULL,
       phoneNumber TEXT,
+      phoneNumber1 TEXT,
       email TEXT,
       address1 TEXT,
       address2 TEXT,

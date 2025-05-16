@@ -1,6 +1,6 @@
 const db = require("./database");
 
-db.run(`DROP TABLE IF EXISTS salaries`, (err) => {
+db.run(`DROP TABLE IF EXISTS settings`, (err) => {
     if (err && !err.message.includes("duplicate column name")) {
       console.error("Failed to drop ledger table", err.message);
     } else {
