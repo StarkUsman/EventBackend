@@ -300,7 +300,7 @@ router.post("/", (req, res) => {
             }        
             let balance = row ? row.balance : 0;
             let vendor_id = row.vendor_id;
-            balance = balance + soundServicePrice;
+            balance = balance - soundServicePrice;
             let ledgerName = "RES:"+reservation_name;
             let amountDebit = soundServicePrice;
             let amountCredit = 0;
@@ -337,7 +337,7 @@ router.post("/", (req, res) => {
             }        
             let balance = row ? row.balance : 0;
             let vendor_id = row.vendor_id;
-            balance = balance + stageDecoreServicePrice;
+            balance = balance - stageDecoreServicePrice;
             let ledgerName = "RES:"+reservation_name;
             let amountDebit = stageDecoreServicePrice;
             let amountCredit = 0;

@@ -291,19 +291,51 @@ router.get("/:id/expense/:purch_id", (req, res) => {
   });
 });
 
+router.get("/:id/:name/:purch_id", (req, res) => {
+  const { id, name, purch_id } = req.params;
+  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND name = ? AND purch_id = ? ORDER BY createdAt ASC", [id, name, purch_id], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json(rows[0]);
+    }
+  });
+});
+
 
 // Delete a ledger entry
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  db.run("DELETE FROM ledger WHERE id = ?", [id], function (err) {
+  db.get("SELECT * FROM ledger WHERE id = ?", [id], (err, row) => {
     if (err) {
-      console.error(`Error deleting ledger entry with ID ${id}:`, err.message);
-      res.status(500).json({ error: err.message });
-    } else if (this.changes === 0) {
-      res.status(404).json({ message: "Ledger entry not found" });
-    } else {
-      res.json({ message: "Ledger entry deleted successfully." });
+      console.error("Error fetching ledger entry:", err.message);
+      return res.status(500).json({ error: err.message });
     }
+
+    if (!row) {
+      return res.status(404).json({ message: "Ledger entry not found" });
+    }
+
+    const { vendor_id, amountDebit, amountCredit } = row;
+
+    // Adjust vendor balance
+    let balanceAdjustment = amountCredit != 0 ? -amountCredit : amountDebit;
+    db.run("UPDATE vendors SET balance = balance + ? WHERE vendor_id = ?", [balanceAdjustment, vendor_id], (err) => {
+      if (err) {
+        console.error("Error updating vendor balance:", err.message);
+      }
+    });
+
+    // Delete the ledger entry
+    db.run("DELETE FROM ledger WHERE id = ?", [id], function (err) {
+      if (err) {
+        console.error("Error deleting ledger entry:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json({ message: "Ledger entry deleted successfully." });
+    });
   });
 });
 

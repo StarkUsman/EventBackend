@@ -22,7 +22,7 @@ router.post("/", (req, res) => {
 
   db.run(
     `INSERT INTO settings (name, phoneNumber, phoneNumber1, email, address1, address2, country, state, city, zip, logo, icon, favicon) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [name, phoneNumber, phoneNumber1, email, address1, address2, country, state, city, zip, logo, icon, favicon],
     function (err) {
       if (err) {

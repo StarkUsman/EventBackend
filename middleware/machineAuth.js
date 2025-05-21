@@ -72,7 +72,7 @@ module.exports = async function machineAuth(req, res, next) {
     }
 
     const now = new Date();
-    const licenseExpiry = new Date("2025-05-25T23:59:59Z");
+    const licenseExpiry = new Date("2025-06-25T23:59:59Z");
 
     // Detect system clock rollback
     if (now < cachedRefDate) {
@@ -100,8 +100,6 @@ async function getReferenceDate() {
   return new Promise((resolve, reject) => {
     db.get("SELECT * FROM systemDateTime ORDER BY id DESC LIMIT 1", [], (err, row) => {
       if (err) return reject(err);
-
-      console.log("Row:", row);
 
       if (row) return resolve(row.date);
 
