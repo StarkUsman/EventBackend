@@ -53,7 +53,7 @@ router.get("/calculate", async (req, res) => {
 
     // Fetch all bookings
     const bookings = await new Promise((resolve, reject) => {
-      db.all('SELECT * FROM bookings', (err, rows) => {
+      db.all('SELECT * FROM bookings WHERE status != "CANCELLED"', (err, rows) => {
         if (err) reject(err);
         else resolve(rows);
       });
@@ -63,14 +63,18 @@ router.get("/calculate", async (req, res) => {
       let totalSalary = 0;
       const salaryMenuItems = salary.menuItems ? JSON.parse(salary.menuItems) : [];
       const salaryMenuItemIds = salaryMenuItems.map(item => item.menu_item_id);
-      const lastPaidDate = salary.lastSalaryPaidDate || '1970-01-01';
+      // const lastPaidDate = salary.lastSalaryPaidDate || '1970-01-01';
+      const lastPaidDateEnd = dayjs(salary.lastSalaryPaidDate).endOf('day');
+      const tomorrowStart = dayjs().add(1, 'day').startOf('day');
       salary.dashboardDate = bookings[0]?.dashboardDate || dayjs().format('YYYY-MM-DD');
 
       // Filter bookings after lastSalaryPaidDate
-      const relevantBookings = bookings.filter(booking => 
-        dayjs(booking.dashboardDate).isAfter(dayjs(lastPaidDate).endOf('day')) &&
-        dayjs(booking.dashboardDate).isBefore(dayjs().add(1, 'day').startOf('day'))
-      );
+      const relevantBookings = bookings.filter(booking => {
+        // dayjs(booking.dashboardDate).isAfter(dayjs(lastPaidDate).endOf('day')) &&
+        // dayjs(booking.dashboardDate).isBefore(dayjs().add(1, 'day').startOf('day'))
+        const bookingDate = dayjs(booking.dashboardDate);
+        return bookingDate.isAfter(lastPaidDateEnd) && bookingDate.isBefore(tomorrowStart);
+      });
 
       for (const booking of relevantBookings) {
         const bookingMenuItems = booking.menu_items_ids ? JSON.parse(booking.menu_items_ids) : [];

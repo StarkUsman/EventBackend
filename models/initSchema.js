@@ -116,7 +116,8 @@ const initDatabase = () => {
       amount REAL,
       account TEXT,
       date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      ledgerId INTEGER
+      ledgerId INTEGER,
+      trans_id INTEGER
     );`,
 
     `CREATE TABLE IF NOT EXISTS vendors (
@@ -137,7 +138,7 @@ const initDatabase = () => {
         menuItems JSON,
         amount REAL DEFAULT 0,
         variableAmount REAL DEFAULT 0,
-        lastSalaryPaidDate TEXT DEFAULT CURRENT_TIMESTAMP
+        lastSalaryPaidDate TEXT DEFAULT (DATE('now'))
       );`,
 
     `CREATE TABLE IF NOT EXISTS ledger (

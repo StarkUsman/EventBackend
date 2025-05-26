@@ -4,11 +4,11 @@ const db = require("../models/database");
 
 // CREATE booking ledger entry
 router.post("/", (req, res) => {
-  const { booking_id, user = null, amount = 0, account = null, date = null, ledgerId } = req.body;
+  const { booking_id, user = null, amount = 0, account = null, date = null, ledgerId, trans_id } = req.body;
 
   db.run(
-    `INSERT INTO bookingLedger (booking_id, user, amount, account, date, ledgerId) VALUES (?, ?, ?, ?, ?, ?)`,
-    [booking_id, user, amount, account, date || new Date().toISOString(), ledgerId],
+    `INSERT INTO bookingLedger (booking_id, user, amount, account, date, ledgerId, trans_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [booking_id, user, amount, account, date || new Date().toISOString(), ledgerId, trans_id],
     function (err) {
       if (err) {
         console.error("Error creating booking ledger entry:", err.message);
@@ -46,11 +46,11 @@ router.get("/:booking_id", (req, res) => {
 // UPDATE a booking ledger entry
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { booking_id, user = null, amount = 0, account = null, date = null } = req.body;
+  const { booking_id, user = null, amount = 0, account = null, date = null, trans_id } = req.body;
 
   db.run(
-    `UPDATE bookingLedger SET booking_id = ?, user = ?, amount = ?, account = ?, date = ? WHERE id = ?`,
-    [booking_id, user, amount, account, date || new Date().toISOString(), id],
+    `UPDATE bookingLedger SET booking_id = ?, user = ?, amount = ?, account = ?, date = ?, trans_id = ? WHERE id = ?`,
+    [booking_id, user, amount, account, date || new Date().toISOString(), trans_id, id],
     function (err) {
       if (err) {
         console.error("Error updating booking ledger entry:", err.message);

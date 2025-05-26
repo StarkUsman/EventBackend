@@ -62,6 +62,26 @@ router.get("/EXPENSE", (req, res) => {
   })
 });
 
+// get categoty by category name
+router.get("/Liability", (req, res) => {
+  db.get("SELECT * FROM Acategory WHERE LOWER(category) = 'liability'", [], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (!row) {
+      return res.status(404).json({ error: "Category not found." });
+    }
+
+    const formattedRow = {
+      ...row,
+      subcategory: JSON.parse(row.subcategory || '[]')
+    }
+
+    res.json(formattedRow);
+  })
+});
+
 // 🔵 GET CATEGORY BY ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;

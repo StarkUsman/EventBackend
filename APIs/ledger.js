@@ -303,6 +303,18 @@ router.get("/:id/:name/:purch_id", (req, res) => {
   });
 });
 
+router.get("/:vendor_id/service/:name/:amountDebit", (req, res) => {
+  const { vendor_id, name, amountDebit } = req.params;
+  db.all("SELECT * FROM ledger WHERE vendor_id = ? AND name = ? AND amountDebit = ? ORDER BY createdAt ASC", [vendor_id, name, amountDebit], (err, rows) => {
+    if (err) {
+      console.error("Error fetching ledger entries:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ data: rows, totalData: rows.length });
+    }
+  });
+})
+
 
 // Delete a ledger entry
 router.delete("/:id", (req, res) => {

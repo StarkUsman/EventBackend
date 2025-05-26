@@ -150,6 +150,32 @@ router.put("/:id", (req, res) => {
   );
 });
 
+router.put("/amount/:id", (req, res) => {
+  const { id } = req.params;
+  const { amount } = req.body;
+
+  if (!amount) {
+    return res.status(400).json({ error: "Required fields are missing" });
+  }
+
+  db.run(
+    `UPDATE transactions SET amount = ? WHERE id = ?`,
+    [amount, id],
+    function (err) {
+      if (err) {
+        console.error("Error updating transaction amount:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Transaction not found" });
+      }
+
+      res.json({ message: "Transaction amount updated successfully" });
+    }
+  );
+});
+
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
