@@ -141,6 +141,15 @@ const initDatabase = () => {
         lastSalaryPaidDate TEXT DEFAULT (DATE('now'))
       );`,
 
+    `CREATE TABLE IF NOT EXISTS salaryHistory (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        vendor JSON NOT NULL,
+        numberOfPersons INTEGER DEFAULT 0,
+        rate REAL DEFAULT 0,
+        totalAmount REAL DEFAULT 0,
+        Dated TEXT DEFAULT (DATE('now'))
+      );`,
+
     `CREATE TABLE IF NOT EXISTS ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,

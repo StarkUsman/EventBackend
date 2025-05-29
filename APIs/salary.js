@@ -76,9 +76,12 @@ router.get("/calculate", async (req, res) => {
         return bookingDate.isAfter(lastPaidDateEnd) && bookingDate.isBefore(tomorrowStart);
       });
 
+      let number_of_persons_sum = 0;
+
       for (const booking of relevantBookings) {
         const bookingMenuItems = booking.menu_items_ids ? JSON.parse(booking.menu_items_ids) : [];
         const numberOfPersons = booking.number_of_persons || 1;
+        number_of_persons_sum += numberOfPersons;
 
         const hasMenuItemMatch = salaryMenuItemIds.some(id => bookingMenuItems.includes(id));
 
@@ -105,6 +108,8 @@ router.get("/calculate", async (req, res) => {
         totalSalaryCalculated: totalSalary,
         lastSalaryPaidDate: dayjs(salary.lastSalaryPaidDate).format('YYYY-MM-DD'),
         dashboardDate: dayjs(salary.dashboardDate).format('YYYY-MM-DD'),
+        number_of_persons_sum: number_of_persons_sum,
+        rate: salary.variableAmount > 0 ? salary.variableAmount : salary.amount,
       };
     });
 

@@ -37,7 +37,7 @@ router.post("/", (req, res) => {
 });
  
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM transactions ORDER BY date ASC", [], (err, rows) => {
+  db.all("SELECT * FROM transactions ORDER BY trans_id ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching transactions:", err.message);
       return res.status(500).json({ error: err.message });

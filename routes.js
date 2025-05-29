@@ -32,6 +32,7 @@ const transactionRoutes = require("./APIs/transactions");
 const usersRoutes = require("./APIs/users");
 const reportsRoutes = require("./APIs/reports");
 const salaryRoutes = require("./APIs/salary");
+const salaryHistoryRoutes = require("./APIs/salaryHistory");
 const bookingLedgerRoutes = require("./APIs/bookingLedger");
 const settingsRoutes = require("./APIs/settings");
 const profitLossRoutes = require("./APIs/profitLoss");
@@ -65,6 +66,7 @@ router.use("/transaction", transactionRoutes);
 router.use("/users", usersRoutes);
 router.use("/reports", reportsRoutes);
 router.use("/salary", salaryRoutes);
+router.use("/salaryHistory", salaryHistoryRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/profitLoss", profitLossRoutes);
 
