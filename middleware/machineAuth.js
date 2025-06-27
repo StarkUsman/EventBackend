@@ -72,12 +72,12 @@ module.exports = async function machineAuth(req, res, next) {
     }
 
     const now = new Date();
-    const licenseExpiry = new Date("2025-06-25T23:59:59Z");
+    const licenseExpiry = new Date("2025-07-31T23:59:59Z");
 
     // Detect system clock rollback
-    if (now < cachedRefDate) {
-      return res.status(403).json({ error: "System time manipulation detected" });
-    }
+    // if (now < cachedRefDate) {
+    //   return res.status(403).json({ error: "System time manipulation detected" });
+    // }
 
     // If refDate is older than 2 days, refresh it
     const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
