@@ -283,6 +283,19 @@ const initDatabase = () => {
       updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
     );`,
 
+    `CREATE TABLE IF NOT EXISTS settings (
+      name TEXT NOT NULL,
+      phoneNumber TEXT,
+      email TEXT,
+      address1 TEXT,
+      address2 TEXT,
+      country TEXT,
+      state TEXT,
+      city TEXT,
+      zip TEXT,
+      logo TEXT,
+      icon TEXT,
+      favicon TEXT);`
   ];
 
   queries.forEach((query) => {

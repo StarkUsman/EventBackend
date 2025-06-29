@@ -24,6 +24,35 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/all", (req, res) => {
+  /*
+  return array of objects with this structure:
+  {
+    id: booking_id,
+    title: reservation_name,
+    start: dashboardDate,
+  }
+  */
+  db.all("SELECT booking_id, reservation_name, dashboardDate, SLOT FROM bookings ORDER BY booking_id ASC", [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching bookings:", err.message);
+      res.status(500).json({ error: err.message });
+    } else {
+      const formattedResponse = rows.map((row) => ({
+        id: JSON.stringify(row.booking_id),
+        title: row.reservation_name,
+        start: row.dashboardDate,
+        end: row.dashboardDate,
+        time: JSON.parse(row.SLOT).slot,
+      }));
+      res.json({
+        data: formattedResponse,
+        totalData: formattedResponse.length
+      });
+    }
+  });
+});
+
 router.get("/formatted", (req, res) => {
   db.all("SELECT * FROM bookings ORDER BY booking_id ASC", [], (err, rows) => {
     if (err) {
