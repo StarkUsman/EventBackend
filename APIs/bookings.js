@@ -54,7 +54,7 @@ router.get("/all", (req, res) => {
 });
 
 router.get("/formatted", (req, res) => {
-  db.all("SELECT * FROM bookings ORDER BY booking_id ASC", [], (err, rows) => {
+  db.all("SELECT * FROM bookings ORDER BY dashboardDate ASC", [], (err, rows) => {
     if (err) {
       console.error("Error fetching vendors:", err.message);
       res.status(500).json({ error: err.message });
