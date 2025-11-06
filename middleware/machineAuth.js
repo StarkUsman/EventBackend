@@ -72,7 +72,7 @@ module.exports = async function machineAuth(req, res, next) {
     }
 
     const now = new Date();
-    const licenseExpiry = new Date("2025-12-31T23:59:59Z");
+    const licenseExpiry = new Date("2026-12-31T23:59:59Z");
 
     // Detect system clock rollback
     // if (now < cachedRefDate) {
